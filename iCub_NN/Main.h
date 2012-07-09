@@ -25,10 +25,11 @@ public:
 	double set_networt_inputs(int test,double noise);
 	double sqr(double input){return input * input;}
 
+
+};
 #define INPUT_NEURONS 	4
 #define OUTPUT_NEURONS 	1
 #define HIDDEN_NEURONS 	10
 #define MAX_TESTS 1
-};
 
 #endif /* MAIN_H_ */

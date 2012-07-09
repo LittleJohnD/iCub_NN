@@ -1,16 +1,16 @@
 /*
  * Main.cpp
  *
- *  Created on: 5 Jul 2012
+ *  Created on: 5 July 2012
  *      Author: little-john
  */
 
-#include "Main.h"
-#include "Network.cpp"
+#include "main.h"
+#include "network.cpp"
 
 using namespace std;
-using namespace network;
-
+namespace main
+{
 Main::Main() {
 	// TODO Auto-generated constructor stub
 
@@ -23,7 +23,6 @@ Main::~Main() {
 int main()
 {
 	//RHO is the rate of learning
-
 	double mse,noise_prob;
 	int test,i,j;
 	srand (time(NULL));
@@ -83,14 +82,14 @@ double randInt()
 double randMax(double max_tests) //this is the maxium randnum(i.e. 1)
 {
 	double tmp;
-	tmp = rand() % max_tests;
+	tmp = (double)rand() % max_tests;
 	return 1;
 }
 
 double calculate_mse(int test)
 {
 	//Calculate the current MSE
-	double mse += sqr(tests[test].output[i]-outputs[i]);
+	double mse;// += sqr(tests[test].output[i]-outputs[i]);
 	return mse;
 }
 
@@ -103,4 +102,4 @@ double set_network_inputs(int test,double noise)
 {
 	return 0;
 }
-
+}/*namespace main*/

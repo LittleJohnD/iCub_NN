@@ -1,21 +1,19 @@
 /*
  * Network.h
  *
- *  Created on: 5 Jul 2012
+ *  Created on: 9 Jul 2012
  *      Author: little-john
  */
 
 #ifndef NETWORK_H_
 #define NETWORK_H_
 
-
-#include <fstream>
-#include <string>
+namespace network {
 
 class Network {
 public:
-	network();
-	virtual ~network();
+	Network();
+	virtual ~Network();
 	int defineVars();
 	double sigmoid(double number);
 	double sigmoid_d(double number);
@@ -23,4 +21,5 @@ public:
 	void backpropagate_error(int test);
 };
 
+} /* namespace network */
 #endif /* NETWORK_H_ */

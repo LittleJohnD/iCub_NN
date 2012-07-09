@@ -1,12 +1,13 @@
 /*
  * Network.cpp
  *
- *  Created on: 5 Jul 2012
+ *  Created on: 9 Jul 2012
  *      Author: little-john
  */
 
-#include "network.h"
-using namespace std;
+#include "Network.h"
+
+namespace network {
 
 double inputs[INPUT_NEURONS +1];
 double hidden[HIDDEN_NEURONS+1];
@@ -14,15 +15,14 @@ double outputs[OUTPUT_NEURONS+1];
 double w_h_i[HIDDEN_NEURONS][INPUT_NEURONS+1];
 double w_o_h[OUTPUT_NEURONS][INPUT_NEURONS+1];
 
-network::network() {
+Network::Network() {
 	// TODO Auto-generated constructor stub
 
 }
 
-network::~network() {
+Network::~Network() {
 	// TODO Auto-generated destructor stub
 }
-
 int network::defineVars()
 {
 	fstream sessionVars;
@@ -108,3 +108,5 @@ void network::backpropagate_error(int test)
 	}
 	return;
 }
+
+} /* namespace network */
