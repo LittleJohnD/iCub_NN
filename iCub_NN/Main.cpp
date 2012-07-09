@@ -1,16 +1,14 @@
 /*
  * Main.cpp
  *
- *  Created on: 5 July 2012
+ *  Created on: 9 Jul 2012
  *      Author: little-john
  */
 
-#include "main.h"
-#include "network.cpp"
+#include "Main.h"
+using namespace network;
+namespace main {
 
-using namespace std;
-namespace main
-{
 Main::Main() {
 	// TODO Auto-generated constructor stub
 
@@ -23,10 +21,10 @@ Main::~Main() {
 int main()
 {
 	//RHO is the rate of learning
-	double mse,noise_prob;
+	double meanSqrErr,noise_prob;
 	int test,i,j;
 	srand (time(NULL));
-	randInt();
+	//randInt();
 	init_network();
 	//Training loop
 
@@ -38,11 +36,11 @@ int main()
 		//Grab network image
 		set_network_inputs(test,0.0);
 		//Feed this data set forward
-		network::feed_forward();
+		feed_forward();
 		//Backpropagte_error
-		network::backpropagate_error(test);
-		mse=calculate_mse(test);
-	}while(mse<0.001);
+		backpropagate_error(test);
+		meanSqrErr =calculate_mse(test);
+	}while(meanSqrErr<0.001);
 	/*
 	 * End of traning loop
 	 *
@@ -55,7 +53,6 @@ int main()
 	for(i=0;i<5;i++)
 	{
 		set_network_inputs(test,noise_prob);
-		network::feed_forward();
 		for(j=0;j<INPUT_NEURONS;j++)
 		{
 			if((j%5)==0)
@@ -66,12 +63,6 @@ int main()
 	}
 	return 0;
 }
-double set_RHO()
-{
-	double RHO = 0.1;
-	return RHO;
-}
-
 double randInt()
 {
 	double tmp;
@@ -79,18 +70,19 @@ double randInt()
 	return 0;
 }
 
-double randMax(double max_tests) //this is the maxium randnum(i.e. 1)
+double randMax(double max_tests) //this is the maximum randNum(i.e. 1)
 {
-	double tmp;
-	tmp = (double)rand() % max_tests;
-	return 1;
+	int tmp;
+	tmp = rand() % int(max_tests);
+	return double(tmp);
 }
 
 double calculate_mse(int test)
 {
 	//Calculate the current MSE
-	double mse;// += sqr(tests[test].output[i]-outputs[i]);
-	return mse;
+	double meanSqrErr = 0;
+	// (+=) sqr(tests[test].output[i]-outputs[i]);
+	return meanSqrErr;
 }
 
 double init_network()
@@ -102,4 +94,4 @@ double set_network_inputs(int test,double noise)
 {
 	return 0;
 }
-}/*namespace main*/
+} /* namespace main */
