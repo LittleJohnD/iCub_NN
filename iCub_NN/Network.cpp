@@ -35,10 +35,12 @@ int Network::DefineVars()
 }
 double Network::sigmoid(double number)
 {
+	//TODO define as 1/1+e^-t where t =function
 	return number;
 }
 double Network::sigmoid_d(double number)
 {
+	//TODO define as (1- y(x))y(x);
 	return number;
 }
 
