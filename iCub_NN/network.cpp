@@ -5,7 +5,7 @@
  *      Author: little-john
  */
 
-#include "Network.h"
+#include "network.h"
 using namespace std;
 
 double inputs[INPUT_NEURONS +1];
@@ -14,16 +14,16 @@ double outputs[OUTPUT_NEURONS+1];
 double w_h_i[HIDDEN_NEURONS][INPUT_NEURONS+1];
 double w_o_h[OUTPUT_NEURONS][INPUT_NEURONS+1];
 
-Network::Network() {
+network::network() {
 	// TODO Auto-generated constructor stub
 
 }
 
-Network::~Network() {
+network::~network() {
 	// TODO Auto-generated destructor stub
 }
 
-int Network::DefineVars()
+int network::defineVars()
 {
 	fstream sessionVars;
 	sessionVars.open("/home/little-john/git/iCub_NN/iCub_NN/sessionVars.conf");
@@ -33,18 +33,18 @@ int Network::DefineVars()
 
 	return 0;
 }
-double Network::sigmoid(double number)
+double network::sigmoid(double number)
 {
 	//TODO define as 1/1+e^-t where t =function
 	return number;
 }
-double Network::sigmoid_d(double number)
+double network::sigmoid_d(double number)
 {
 	//TODO define as (1- y(x))y(x);
 	return number;
 }
 
-void Network::feed_forward(void)
+void network::feed_forward()
 {
 	int i,j;
 	//calculate outputs for the hidden layer
@@ -69,7 +69,7 @@ void Network::feed_forward(void)
 	}
 }
 
-void Network::backpropagate_error(int test)
+void network::backpropagate_error(int test)
 {
 	int out,hid,inp;
 	double err_out[OUTPUT_NEURONS];
