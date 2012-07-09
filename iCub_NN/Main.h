@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include "Network.cpp"
 
 namespace main {
 
@@ -25,14 +26,13 @@ public:
 	double calculate_mse(int test);
 	double init_network();
 	double set_networt_inputs(int test,double noise);
-	double sqr(double input){return input * input;}
+	double sqr(double input);
 };
 
 #define INPUT_NEURONS 	4
 #define OUTPUT_NEURONS 	1
 #define HIDDEN_NEURONS 	10
 #define MAX_TESTS 1
-#define RHO 0.1
 } /* namespace main */
 
 

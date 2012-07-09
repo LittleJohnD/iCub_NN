@@ -6,6 +6,8 @@
  */
 
 #include "Network.h"
+using namespace std;
+//using namespace main;
 
 namespace network {
 
@@ -23,7 +25,7 @@ Network::Network() {
 Network::~Network() {
 	// TODO Auto-generated destructor stub
 }
-int network::defineVars()
+int defineVars()
 {
 	fstream sessionVars;
 	sessionVars.open("/home/little-john/git/iCub_NN/iCub_NN/sessionVars.conf");
@@ -33,18 +35,18 @@ int network::defineVars()
 
 	return 0;
 }
-double network::sigmoid(double number)
+int sigmoid(int number)
 {
 	//TODO define as 1/1+e^-t where t =function
 	return number;
 }
-double network::sigmoid_d(double number)
+int sigmoid_d(int number)
 {
 	//TODO define as (1- y(x))y(x);
 	return number;
 }
 
-void network::feed_forward()
+void feed_forward()
 {
 	int i,j;
 	//calculate outputs for the hidden layer
@@ -55,7 +57,7 @@ void network::feed_forward()
 		{
 			hidden[i]+=(w_h_i[i][j]*inputs[j]);
 		}
-		hidden[i]=Network::sigmoid(hidden[i]);
+		hidden[i]=sigmoid(hidden[i]);
 	}
 	//calculate ouptuts for the output layer
 	for(i=0;i<OUTPUT_NEURONS;i++)
@@ -65,11 +67,11 @@ void network::feed_forward()
 		{
 			outputs[i]+=(w_o_h[i][j]*hidden[j]);
 		}
-		outputs[i]=Network::sigmoid(outputs[i]);
+		outputs[i]=sigmoid(outputs[i]);
 	}
 }
 
-void network::backpropagate_error(int test)
+void backpropagate_error(int test)
 {
 	int out,hid,inp;
 	double err_out[OUTPUT_NEURONS];
@@ -77,18 +79,18 @@ void network::backpropagate_error(int test)
 	//Compute the error for the output nodes
 	for(out=0;out<OUTPUT_NEURONS;out++)
 	{
-		err_out[out]=((double)tests[test].outputs[out]-outputs[out])*Network::sigmoid_d(outputs[out]);
+		//TODO fix (err_out[out]=((double)tests[test].outputs[out]-outputs[out])*sigmoid_d(outputs[out]);)
 	}
 	//Compute the error for the hidden nodes
 	for(hid=0;hid<HIDDEN_NEURONS;hid++)
 	{
-		err_hid=0.0;
+		err_hid[hid]=0.0;
 		//Include error contribution for all output nodes
 		for(out=0;out<OUTPUT_NEURONS;out++)
 		{
 			err_hid[hid]+=err_out[out]*w_o_h[out][hid];
 		}
-		err_hid[hid]*=Network::sigmoid_d(hidden[hid]);
+		err_hid[hid]*=sigmoid_d(hidden[hid]);
 	}
 	//Adjust the weights from the hidden to output layer
 	for(out=0;out<OUTPUT_NEURONS;out++)
