@@ -17,6 +17,10 @@ public:
 	Network();
 	virtual ~Network();
 	int DefineVars();
+	double sigmoid(double number);
+	double sigmoid_d(double number);
+	void feed_forward(void);
+	void backpropagate_error(int test);
 #define INPUT_NEURONS 	35
 #define OUTPUT_NEURONS 	10
 #define HIDDEN_NEURONS 	10
