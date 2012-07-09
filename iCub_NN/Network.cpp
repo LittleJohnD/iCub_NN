@@ -23,7 +23,7 @@ Network::~Network() {
 	// TODO Auto-generated destructor stub
 }
 
-int DefineVars()
+int Network::DefineVars()
 {
 	fstream sessionVars;
 	sessionVars.open("/home/little-john/git/iCub_NN/iCub_NN/sessionVars.conf");
@@ -33,16 +33,16 @@ int DefineVars()
 
 	return 0;
 }
-double sigmoid(double number)
+double Network::sigmoid(double number)
 {
 	return number;
 }
-double sigmoid_d(double number)
+double Network::sigmoid_d(double number)
 {
 	return number;
 }
 
-void feed_forward(void)
+void Network::feed_forward(void)
 {
 	int i,j;
 	//calculate outputs for the hidden layer
@@ -53,7 +53,7 @@ void feed_forward(void)
 		{
 			hidden[i]+=(w_h_i[i][j]*inputs[j]);
 		}
-		hidden[i]=sigmoid(hidden[i]);
+		hidden[i]=Network::sigmoid(hidden[i]);
 	}
 	//calculate ouptuts for the output layer
 	for(i=0;i<OUTPUT_NEURONS;i++)
@@ -63,11 +63,11 @@ void feed_forward(void)
 		{
 			outputs[i]+=(w_o_h[i][j]*hidden[j]);
 		}
-		outputs[i]=sigmoid(outputs[i]);
+		outputs[i]=Network::sigmoid(outputs[i]);
 	}
 }
 
-void backpropagate_error(int test)
+void Network::backpropagate_error(int test)
 {
 	int out,hid,inp;
 	double err_out[OUTPUT_NEURONS];
@@ -75,7 +75,7 @@ void backpropagate_error(int test)
 	//Compute the error for the output nodes
 	for(out=0;out<OUTPUT_NEURONS;out++)
 	{
-		err_out[out]=((double)tests[test].outputs[out]-outputs[out])*sigmoid_d(outputs[out]);
+		err_out[out]=((double)tests[test].outputs[out]-outputs[out])*Network::sigmoid_d(outputs[out]);
 	}
 	//Compute the error for the hidden nodes
 	for(hid=0;hid<HIDDEN_NEURONS;hid++)
@@ -86,7 +86,7 @@ void backpropagate_error(int test)
 		{
 			err_hid[hid]+=err_out[out]*w_o_h[out][hid];
 		}
-		err_hid[hid]*=sigmoid_d(hidden[hid]);
+		err_hid[hid]*=Network::sigmoid_d(hidden[hid]);
 	}
 	//Adjust the weights from the hidden to output layer
 	for(out=0;out<OUTPUT_NEURONS;out++)
