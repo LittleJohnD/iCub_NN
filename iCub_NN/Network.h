@@ -9,17 +9,21 @@
 #define NETWORK_H_
 
 #include <fstream>
+#include <stdio.h>
 namespace network {
 
 class Network {
 public:
 	Network();
 	virtual ~Network();
+	void feed_forward(void);
+	void backpropagate_error(int test);
+
+private:
+
 	int defineVars();
 	int sigmoid(int number);
 	int sigmoid_d(int number);
-	void feed_forward(void);
-	void backpropagate_error(int test);
 };
 #define INPUT_NEURONS 	4
 #define OUTPUT_NEURONS 	1

@@ -13,9 +13,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
-#include "Network.cpp"
 
-namespace main {
+
+#include "Network.cpp"
 
 class Main {
 public:
@@ -33,8 +33,6 @@ public:
 #define OUTPUT_NEURONS 	1
 #define HIDDEN_NEURONS 	10
 #define MAX_TESTS 1
-} /* namespace main */
-
 
 
 #endif /* MAIN_H_ */

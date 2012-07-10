@@ -7,7 +7,6 @@
 
 #include "Network.h"
 using namespace std;
-//using namespace main;
 
 namespace network {
 
@@ -30,7 +29,7 @@ int defineVars()
 	fstream sessionVars;
 	sessionVars.open("/home/little-john/git/iCub_NN/iCub_NN/sessionVars.conf");
 	if(sessionVars.is_open())
-		cout<<"File loaded"<<endl;
+		printf("File loaded\n");
 	sessionVars.close();
 
 	return 0;
@@ -59,13 +58,13 @@ void feed_forward()
 		}
 		hidden[i]=sigmoid(hidden[i]);
 	}
-	//calculate ouptuts for the output layer
+	//calculate outputs for the output layer
 	for(i=0;i<OUTPUT_NEURONS;i++)
 	{
 		outputs[i]=0.0;
 		for(j=0;j<HIDDEN_NEURONS+1;j++)
 		{
-			outputs[i]+=(w_o_h[i][j]*hidden[j]);
+			//outputs[i]+=(w_o_h[i][j]*hidden[j]);
 		}
 		outputs[i]=sigmoid(outputs[i]);
 	}
@@ -74,7 +73,7 @@ void feed_forward()
 void backpropagate_error(int test)
 {
 	int out,hid,inp;
-	double err_out[OUTPUT_NEURONS];
+	//double err_out[OUTPUT_NEURONS];
 	double err_hid[HIDDEN_NEURONS];
 	//Compute the error for the output nodes
 	for(out=0;out<OUTPUT_NEURONS;out++)
@@ -88,7 +87,7 @@ void backpropagate_error(int test)
 		//Include error contribution for all output nodes
 		for(out=0;out<OUTPUT_NEURONS;out++)
 		{
-			err_hid[hid]+=err_out[out]*w_o_h[out][hid];
+			//err_hid[hid]+=err_out[out]*w_o_h[out][hid];
 		}
 		err_hid[hid]*=sigmoid_d(hidden[hid]);
 	}
@@ -97,7 +96,7 @@ void backpropagate_error(int test)
 	{
 		for(hid=0;hid<HIDDEN_NEURONS;hid++)
 		{
-			w_o_h[out][hid]+=RHO * err_out[out]*hidden[hid];
+			//w_o_h[out][hid]+=RHO * err_out[out]*hidden[hid];
 		}
 	}
 	//Adjust the weights from the input to the hidden layer
@@ -105,7 +104,7 @@ void backpropagate_error(int test)
 	{
 		for(inp=0;inp<INPUT_NEURONS;inp++)
 		{
-			w_h_i[hid][inp]+=RHO * err_hid[hid]*inputs[inp];
+			//w_h_i[hid][inp]+=RHO * err_hid[hid]*inputs[inp];
 		}
 	}
 	return;
