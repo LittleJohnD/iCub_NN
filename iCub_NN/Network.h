@@ -10,25 +10,42 @@
 
 #include <fstream>
 #include <stdio.h>
-namespace network {
+#include <stdlib.h>
+#include <time.h>
+#include <math.h>
 
 class Network {
 public:
-	Network();
+	Network(int num_input, int num_hidden, int num_output);
 	virtual ~Network();
-	void feed_forward(void);
-	void backpropagate_error(int test);
+	void init();
+	void update(double *input_vector);
+	void backpropagate_error(double *teaching_input);
+	inline void set_rho( double r){RHO = r;}
+	inline void reset_meanSqrErr( void ){ meanSqrErr = 0.0;}
+	inline double get_meanSqrErr( void ){ return meanSqrErr;}
 
 private:
+	int INPUT_NEURONS;
+	int OUTPUT_NEURONS;
+	int HIDDEN_NEURONS;
+	int MAX_TESTS;
+	double RHO;
+	double meanSqrErr;
 
-	int defineVars();
-	int sigmoid(int number);
-	int sigmoid_d(int number);
+	double *inputs;
+	double *hidden;
+	double *outputs;
+	double *err_hid;
+	double *err_out;
+
+	double **w_h_i;
+	double **w_o_h;
+	double *w_h_b;
+	double *w_o_b;
+
+	//int defineVars();
+	double sigmoid(double number);
+	double sigmoid_d(double number);
 };
-#define INPUT_NEURONS 	4
-#define OUTPUT_NEURONS 	1
-#define HIDDEN_NEURONS 	10
-#define MAX_TESTS 1
-#define RHO 0.1
-} /* namespace network */
 #endif /* NETWORK_H_ */
