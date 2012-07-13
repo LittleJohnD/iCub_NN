@@ -21,43 +21,60 @@ double input[4][2] ={
 			{1.0, 1.0}};
 double output[4] = {0.0, 0.0, 0.0, 1.0};
 int sequence[4] = {0, 1, 2, 3};
+//void shuffle(int* array,int size);
+
+void shuffle(int array[],int size)
+{
+	srand (time(NULL));
+	int tmpAry[size];
+	int tmpNum;
+	int usedNum[size];
+	for(int i=0;i<size;i++)
+		tmpAry[i] = array[i];
+
+	for(int j=0;j<size;j++)
+	{
+		randloop:
+		tmpNum = rand() % size;
+		for(int x=0;x<j;x++)
+		{
+			if(tmpNum==usedNum[x])
+				goto randloop;
+
+		}
+		usedNum[j] = tmpNum;
+	}
+	delete[]tmpAry;
+	delete[]usedNum;
+
+}
 
 int main(int argc, char** argv)
 {
+	/*
+	 * To seed this I just need to change the value in srand to a value and that will create a seed,
+	 * This can be done with a random number or given value.
+	 */
 	srand (time(NULL));
 	Network *net;
 	net = new Network(2,3,1);
 
 	net->set_rho(0.1);
 	net->init();
-	//load input output pairs;
 
-
-	//RHO is the rate of learning
-	//double meanSqrErr,noise_prob;
-	//int test,i,j;
-	//
-	//randInt();
-	//init_network();
 	//Training loop
-
-	do{
-		//shuffle(sequence);
+	do
+	{
+		//Randomise input and reset MSE
+		shuffle(sequence,4);
 		net->reset_meanSqrErr();
-		for(int i = 0; i < 4; i++){
-			// reset mse to 0 then for
-			//pick a test at random
-
-			//test = int(randMax(MAX_TESTS));
-			//Grab network image
-			//set_network_inputs(test,noise_prob);
-			//Feed this data set forward
-			//n.feed_forward();
-			//net->update(input[sequence[i]]);
-
-
+		for(int i = 0; i < 4; i++)
+		{
+			printf("Sequence: %d\n",sequence[i]);
+			//Feed this data set forward;
+			net->update(input[sequence[i]]);
 			//Backpropagte_error
-			//net->backpropagate_error(output[sequence[i]]);
+			net->backpropagate_error(output[sequence[i]]);
 			//the second value is put in to make it work TODO put in complete value
 			//meanSqrErr += calculate_mse(test,1);
 		}

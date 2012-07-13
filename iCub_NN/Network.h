@@ -20,7 +20,7 @@ public:
 	virtual ~Network();
 	void init();
 	void update(double *input_vector);
-	void backpropagate_error(double *teaching_input);
+	void backpropagate_error(double teaching_input)/*Due to only one output(double *teaching_input)*/;
 	inline void set_rho( double r){RHO = r;}
 	inline void reset_meanSqrErr( void ){ meanSqrErr = 0.0;}
 	inline double get_meanSqrErr( void ){ return meanSqrErr;}

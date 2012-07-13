@@ -74,6 +74,7 @@ void Network::update( double *input_vector)
 		for(int i=0;i<INPUT_NEURONS;i++)
 		{
 			hidden[h]+=(w_h_i[h][i]*input_vector[i]);
+			printf("Hidden %d: %f\n",h,hidden[h]);
 		}
 		hidden[h]=sigmoid(hidden[h]);
 	}
@@ -84,21 +85,11 @@ void Network::update( double *input_vector)
 		for(int h=0;h<HIDDEN_NEURONS;h++)
 		{
 			outputs[out]+=w_o_h[out][h]*hidden[h];
+			printf("Output %d: %f\n",out,outputs[out]);
 		}
 		outputs[out]=sigmoid(outputs[out]);
 	}
 }
-
-//int defineVars()
-//{
-//	fstream sessionVars;
-//	sessionVars.open("/home/little-john/git/iCub_NN/iCub_NN/sessionVars.conf");
-//	if(sessionVars.is_open())
-//		printf("File loaded\n");
-//	sessionVars.close();
-//
-//	return 0;
-//}
 
 double Network::sigmoid(double number)
 {
@@ -112,15 +103,14 @@ double Network::sigmoid_d(double number)
 	return (1.0 - number) * number;
 }
 
-
-void Network::backpropagate_error(double *teaching_input)
+void Network::backpropagate_error(double teaching_input)/*Due to there only being one output (double *teaching_input)*/
 {
 	int out,hid,inp;
 
 	//Compute the error for the output nodes
 	for(out=0;out<OUTPUT_NEURONS;out++)
 	{
-		double tmp_err = (teaching_input[out]-outputs[out]);
+		double tmp_err = (teaching_input-outputs[out]);/*Due to there only being one output (teaching_input[out]-outputs[out]);*/
 		err_out[out] = tmp_err*sigmoid_d(outputs[out]);
 		meanSqrErr += tmp_err *tmp_err;
 	}
