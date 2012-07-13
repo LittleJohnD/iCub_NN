@@ -1,7 +1,7 @@
 /*
  * Main.cpp
  *
- *  Created on: 9 Jul 2012
+ *  Created on: 9 July 2012
  *      Author: little-john
  */
 
