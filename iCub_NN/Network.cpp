@@ -8,8 +8,8 @@
 #include "Network.h"
 
 
-Network::Network(int num_input, int num_hidden, int num_output) {
-	// TODO Auto-generated constructor stub
+Network::Network(int num_input, int num_hidden, int num_output)
+{
 	INPUT_NEURONS = num_input;
 	HIDDEN_NEURONS = num_hidden;
 	OUTPUT_NEURONS = num_output;
@@ -31,8 +31,8 @@ Network::Network(int num_input, int num_hidden, int num_output) {
 	err_hid = new double [HIDDEN_NEURONS];
 }
 
-Network::~Network() {
-	// TODO Auto-generated destructor stub
+Network::~Network()
+{
 	delete[] inputs;
 	delete[] hidden ;
 	delete[] outputs;
@@ -74,7 +74,6 @@ void Network::update( double *input_vector)
 		for(int i=0;i<INPUT_NEURONS;i++)
 		{
 			hidden[h]+=(w_h_i[h][i]*input_vector[i]);
-			printf("Hidden %d: %f\n",h,hidden[h]);
 		}
 		hidden[h]=sigmoid(hidden[h]);
 	}
@@ -85,21 +84,19 @@ void Network::update( double *input_vector)
 		for(int h=0;h<HIDDEN_NEURONS;h++)
 		{
 			outputs[out]+=w_o_h[out][h]*hidden[h];
-			printf("Output %d: %f\n",out,outputs[out]);
 		}
+		printf("Output %d: %f\n",out,outputs[out]);
 		outputs[out]=sigmoid(outputs[out]);
 	}
 }
 
 double Network::sigmoid(double number)
 {
-	//TODO define as 1/1+e^-t where t =function
 	return 1.0/ 1 + exp(-(number));
 }
 
 double Network::sigmoid_d(double number)
 {
-	//TODO define as (1- y(x))y(x);
 	return (1.0 - number) * number;
 }
 

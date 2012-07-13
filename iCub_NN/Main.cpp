@@ -19,49 +19,48 @@ double input[4][2] ={
 			{0.0, 1.0},
 			{1.0, 0.0},
 			{1.0, 1.0}};
-double output[4] = {0.0, 0.0, 0.0, 1.0};
-int sequence[4] = {0, 1, 2, 3};
-//void shuffle(int* array,int size);
+double desiredOutput[4] = {0.0, 0.0, 0.0, 1.0};
+int * sequence;
 
-void shuffle(int array[],int size)
+void shuffle(int* array,int size)
 {
+	/*
+	 * To seed this I just need to change the value in srand() to a value and that will create a seed,
+	 * This can be done with a random number or given value.
+	 */
 	srand (time(NULL));
-	int tmpAry[size];
+	int* tmpAry;
 	int tmpNum;
 	int usedNum[size];
+	tmpAry = new int[size];
 	for(int i=0;i<size;i++)
-		tmpAry[i] = array[i];
-
-	for(int j=0;j<size;j++)
 	{
 		randloop:
 		tmpNum = rand() % size;
-		for(int x=0;x<j;x++)
+		for(int j=0;j<i;j++)
 		{
-			if(tmpNum==usedNum[x])
+			if(tmpNum==usedNum[j])
 				goto randloop;
-
 		}
-		usedNum[j] = tmpNum;
+		usedNum[i] = tmpNum;
+	}
+	for(int x=0;x<size;x++)
+	{
+		sequence[x]=usedNum[x];
+		printf("Sequence: %d\n",sequence[x]);
 	}
 	delete[]tmpAry;
-	delete[]usedNum;
-
+	//delete[]usedNum;
 }
 
 int main(int argc, char** argv)
 {
-	/*
-	 * To seed this I just need to change the value in srand to a value and that will create a seed,
-	 * This can be done with a random number or given value.
-	 */
-	srand (time(NULL));
+
 	Network *net;
 	net = new Network(2,3,1);
-
+	sequence = new int[4];
 	net->set_rho(0.1);
 	net->init();
-
 	//Training loop
 	do
 	{
@@ -70,16 +69,15 @@ int main(int argc, char** argv)
 		net->reset_meanSqrErr();
 		for(int i = 0; i < 4; i++)
 		{
-			printf("Sequence: %d\n",sequence[i]);
 			//Feed this data set forward;
 			net->update(input[sequence[i]]);
 			//Backpropagte_error
-			net->backpropagate_error(output[sequence[i]]);
-			//the second value is put in to make it work TODO put in complete value
-			//meanSqrErr += calculate_mse(test,1);
+			net->backpropagate_error(desiredOutput[sequence[i]]);
 		}
-	}while(net->get_meanSqrErr()/(4.0)<=0.001);
+		printf("MSE: %f\n",net->get_meanSqrErr());
+	}while((net->get_meanSqrErr()/4.0)>=0.001);
 	delete net;
+	delete[] sequence;
 	/*
 	 * End of traning loop
 	 *
