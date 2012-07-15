@@ -53,7 +53,9 @@ Network::~Network()
 	}
 	delete[] w_h_i;
 	for (int i = 0; i <OUTPUT_NEURONS; i++)
+	{
 	       delete[] w_o_h[i];
+	}
 	delete[] w_o_h;
 	delete[] w_h_b;
 	delete[] w_o_b;
@@ -64,7 +66,7 @@ Network::~Network()
 void Network::init() {
 	srand (time(NULL));
 	for (int h = 0; h < HIDDEN_NEURONS; h++){
-		for (int i = 0; i < INPUT_NEURONS+1; i++){
+		for (int i = 0; i < INPUT_NEURONS; i++){
 			w_h_i[h][i] = (double(rand()%100)/100 - 0.5);
 
 		}
