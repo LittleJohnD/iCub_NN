@@ -24,6 +24,7 @@ public:
 	inline void set_rho( double r){RHO = r;}
 	inline void reset_meanSqrErr( void ){ meanSqrErr = 0.0;}
 	inline double get_meanSqrErr( void ){ return meanSqrErr;}
+	inline double* get_output( void ){return outputs;}
 
 private:
 	int INPUT_NEURONS;

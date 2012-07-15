@@ -59,7 +59,7 @@ int main(int argc, char** argv)
 	Network *net;
 	net = new Network(2,3,1);
 	sequence = new int[4];
-	net->set_rho(0.1);
+	net->set_rho(0.5);
 	net->init();
 	//Training loop
 	do
@@ -74,29 +74,23 @@ int main(int argc, char** argv)
 			//Backpropagte_error
 			net->backpropagate_error(desiredOutput[sequence[i]]);
 		}
-		printf("MSE: %f\n",net->get_meanSqrErr());
+		printf("MSE: %f\n",net->get_meanSqrErr()/4);
 	}while((net->get_meanSqrErr()/4.0)>=0.001);
-	delete net;
-	delete[] sequence;
+
 	/*
 	 * End of traning loop
 	 *
-	 * Now testing the network with various amount of noise
+	 * Now testing the network
 	 *
 	 */
-//	test = randMax(MAX_TESTS);
-//	//Start at noise_prob @ 5% finishing @ 25%
-//	noise_prob = 0.05;
-//	for(i=0;i<5;i++)
-//	{
-//		set_network_inputs(test,noise_prob);
-//		for(j=0;j<INPUT_NEURONS;j++)
-//		{
-//			if((j%5)==0)
-//				printf("\n");
-//			printf("%d",(int)inputs[j]);
-//		}
-//		noise_prob+=0.05;
-//	}
+	shuffle(sequence,4);
+	for(int t=0;t<4;t++)
+	{
+		net->update(input[sequence[t]]);
+		printf("Desired output: %f ", desiredOutput[sequence[t]]);
+		printf("Output: %f\n",net->get_output()[0]);
+	}
+	delete[] sequence;
+	delete net;
 	return 0;
 }
