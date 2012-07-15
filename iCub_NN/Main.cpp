@@ -59,7 +59,8 @@ int main(int argc, char** argv)
 	Network *net;
 	net = new Network(2,3,1);
 	sequence = new int[4];
-	net->set_rho(0.5);
+	net->set_rho(0.75);
+	net->set_mSEBound(0.01);
 	net->init();
 	//Training loop
 	do
@@ -74,8 +75,8 @@ int main(int argc, char** argv)
 			//Backpropagte_error
 			net->backpropagate_error(desiredOutput[sequence[i]]);
 		}
-		printf("MSE: %f\n",net->get_meanSqrErr()/4);
-	}while((net->get_meanSqrErr()/4.0)>=0.001);
+		//printf("MSE: %f\n",net->get_meanSqrErr()/4);
+	}while((net->get_meanSqrErr()/4.0)>=net->get_mSEBound());
 
 	/*
 	 * End of traning loop

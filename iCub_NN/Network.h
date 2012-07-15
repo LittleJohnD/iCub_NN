@@ -24,6 +24,8 @@ public:
 	inline void set_rho( double r){RHO = r;}
 	inline void reset_meanSqrErr( void ){ meanSqrErr = 0.0;}
 	inline double get_meanSqrErr( void ){ return meanSqrErr;}
+	inline void set_mSEBound( double b ){mSEBound=b;}
+	inline double get_mSEBound( void ){return mSEBound;}
 	inline double* get_output( void ){return outputs;}
 
 private:
@@ -33,6 +35,7 @@ private:
 	int MAX_TESTS;
 	double RHO;
 	double meanSqrErr;
+	double mSEBound;
 
 	double *inputs;
 	double *hidden;

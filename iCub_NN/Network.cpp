@@ -21,11 +21,15 @@ Network::Network(int num_input, int num_hidden, int num_output)
 
 	w_h_i = new double* [HIDDEN_NEURONS];
 	for (int i = 0; i < HIDDEN_NEURONS; i++)
+	{
 		w_h_i[i] = new double [INPUT_NEURONS];
+	}
 
 	w_o_h = new double* [OUTPUT_NEURONS];
 	for (int i = 0; i <OUTPUT_NEURONS; i++)
+	{
 	       w_o_h[i] = new double [HIDDEN_NEURONS];
+	}
 
 	w_h_b = new double[HIDDEN_NEURONS];
 	w_o_b = new double[OUTPUT_NEURONS];
@@ -39,12 +43,18 @@ Network::~Network()
 	delete[] inputs;
 	delete[] hidden ;
 	delete[] outputs;
-//	for (int i = 0; i < HIDDEN_NEURONS; i++)
-//		delete[] w_h_i[i];
-//	delete[] w_h_i;
-//	for (int i = 0; i <OUTPUT_NEURONS; i++)
-//	       delete[] w_o_h[i];
-//	delete[] w_o_h;
+	/*
+	 * There is a memory leak in the next for loop and I cannot work out
+	 * where it originates so it has been commented out.
+	 */
+	for (int i = 0; i < HIDDEN_NEURONS; i++)
+	{
+		delete[] w_h_i[i];
+	}
+	delete[] w_h_i;
+	for (int i = 0; i <OUTPUT_NEURONS; i++)
+	       delete[] w_o_h[i];
+	delete[] w_o_h;
 	delete[] w_h_b;
 	delete[] w_o_b;
 	delete[] err_out;
