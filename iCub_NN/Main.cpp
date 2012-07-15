@@ -47,7 +47,7 @@ void shuffle(int* array,int size)
 	for(int x=0;x<size;x++)
 	{
 		sequence[x]=usedNum[x];
-		printf("Sequence: %d\n",sequence[x]);
+		//printf("Sequence: %d\n",sequence[x]);
 	}
 	delete[]tmpAry;
 	//delete[]usedNum;

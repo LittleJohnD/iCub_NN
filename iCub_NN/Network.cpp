@@ -50,18 +50,20 @@ Network::~Network()
 }
 
 void Network::init() {
+	srand (time(NULL));
 	for (int h = 0; h < HIDDEN_NEURONS; h++){
 		for (int i = 0; i < INPUT_NEURONS+1; i++){
-			w_h_i[h][i] = rand()%1 - 0.5;
+			w_h_i[h][i] = (double(rand()%100)/100 - 0.5);
+
 		}
-		w_h_b[h] = rand()%1 - 0.5;
+		w_h_b[h] = double(rand()%100)/100 - 0.5;
 	}
 
 	for(int out = 0; out < OUTPUT_NEURONS; out++){
 		for(int h = 0; h < HIDDEN_NEURONS; h++){
-			w_o_h[out][h] = rand() %1 - 0.5;
+			w_o_h[out][h] = (double(rand()%100)/100 - 0.5);
 		}
-		w_o_b[out] = rand()%1 - 0.5;
+		w_o_b[out] = double(rand()%100)/100 - 0.5;
 	}
 }
 
@@ -85,14 +87,14 @@ void Network::update( double *input_vector)
 		{
 			outputs[out]+=w_o_h[out][h]*hidden[h];
 		}
-		printf("Output %d: %f\n",out,outputs[out]);
 		outputs[out]=sigmoid(outputs[out]);
+		//printf("Output %d: %f\n",out,outputs[out]);
 	}
 }
 
 double Network::sigmoid(double number)
 {
-	return 1.0/ 1 + exp(-(number));
+	return 1.0/(1.0 + exp(-(number)));
 }
 
 double Network::sigmoid_d(double number)
@@ -108,6 +110,8 @@ void Network::backpropagate_error(double teaching_input)/*Due to there only bein
 	for(out=0;out<OUTPUT_NEURONS;out++)
 	{
 		double tmp_err = (teaching_input-outputs[out]);/*Due to there only being one output (teaching_input[out]-outputs[out]);*/
+		//printf("Teaching-output: %f , output: %f tin: %f\n", tmp_err,outputs[out],teaching_input);
+
 		err_out[out] = tmp_err*sigmoid_d(outputs[out]);
 		meanSqrErr += tmp_err *tmp_err;
 	}
@@ -129,7 +133,9 @@ void Network::backpropagate_error(double teaching_input)/*Due to there only bein
 	{
 		for(hid=0;hid<HIDDEN_NEURONS;hid++)
 		{
+			//printf("before woh: %f", w_o_h[out][hid]);
 			w_o_h[out][hid]+=RHO * err_out[out]*hidden[hid];
+			//printf("after woh: %f\n", w_o_h[out][hid]);
 		}
 	}
 	//Adjust the weights from the input to the hidden layer
