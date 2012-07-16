@@ -21,6 +21,8 @@ double input[4][3] ={
 			{1.0, 1.0, 0.0}};
 double desiredOutput[4] = {0.0, 0.0, 0.0, 1.0};
 int * sequence;
+int iterations;
+long seed = 42949;
 
 void shuffle(int* array,int size)
 {
@@ -56,13 +58,14 @@ void shuffle(int* array,int size)
 int main(int argc, char** argv)
 {
 
-	printf("Initiating training...");
+	printf("Initiating training\n");
 	Network *net;
-	net = new Network(2,3,1);
+	net = new Network(2,3,1,seed);
 	sequence = new int[4];
 	net->set_rho(0.5);
 	net->set_mSEBound(0.001);
 	net->init();
+	iterations=0;
 	//Training loop
 
 	do
@@ -77,10 +80,17 @@ int main(int argc, char** argv)
 			//Backpropagte_error
 			net->backpropagate_error(desiredOutput[sequence[i]]);
 		}
-		printf("MSE: %f\n",net->get_meanSqrErr()/4);
+		iterations++;
+		if(iterations%5000==0)
+		  net->printData(iterations);
+		if(iterations%500000==0)
+		  printf("\n");
+		else if(iterations%5000==0)
+		  printf(".");
 	}while((net->get_meanSqrErr()/4.0)>=net->get_mSEBound());
+	net->printData(iterations);
 	delete[] sequence;
-	printf("Training complete\n");
+	printf("\nTraining complete\n");
 	/*
 	 * End of traning loop
 	 *

@@ -6,9 +6,9 @@
  */
 
 #include "Network.h"
+using namespace std;
 
-
-Network::Network(int num_input, int num_hidden, int num_output)
+Network::Network(int num_input, int num_hidden, int num_output, long seed)
 {
 	INPUT_NEURONS = num_input;
 	HIDDEN_NEURONS = num_hidden;
@@ -36,6 +36,8 @@ Network::Network(int num_input, int num_hidden, int num_output)
 
 	err_out = new double [OUTPUT_NEURONS];
 	err_hid = new double [HIDDEN_NEURONS];
+
+	dataOutput.open ("mseData.csv");
 }
 
 Network::~Network()
@@ -61,6 +63,8 @@ Network::~Network()
 	delete[] w_o_b;
 	delete[] err_out;
 	delete[] err_hid;
+
+	dataOutput.close();
 }
 
 void Network::init() {
@@ -79,6 +83,9 @@ void Network::init() {
 		}
 		w_o_b[out] = double(rand()%100)/100 - 0.5;
 	}
+	dataOutput <<"RHO,"<<RHO<<"\n";
+	dataOutput <<"Hidden_Nodes,"<<HIDDEN_NEURONS<<"\n";
+	dataOutput <<"Iterations,MSE "<<"\n";
 }
 
 void Network::update( double *input_vector)
@@ -160,4 +167,9 @@ void Network::backpropagate_error(double teaching_input)/*Due to there only bein
 			w_h_i[hid][inp]+=RHO * err_hid[hid]*inputs[inp];
 		}
 	}
+}
+
+void Network::printData(int iter)
+{
+  dataOutput <<iter<<","<< (meanSqrErr/4) <<"\n";
 }
