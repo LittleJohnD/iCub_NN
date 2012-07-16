@@ -56,13 +56,15 @@ void shuffle(int* array,int size)
 int main(int argc, char** argv)
 {
 
+	printf("Initiating training...");
 	Network *net;
 	net = new Network(2,3,1);
 	sequence = new int[4];
-	net->set_rho(0.75);
-	net->set_mSEBound(0.01);
+	net->set_rho(1.0);
+	net->set_mSEBound(0.05);
 	net->init();
 	//Training loop
+
 	do
 	{
 		//Randomise input and reset MSE
@@ -77,21 +79,23 @@ int main(int argc, char** argv)
 		}
 		//printf("MSE: %f\n",net->get_meanSqrErr()/4);
 	}while((net->get_meanSqrErr()/4.0)>=net->get_mSEBound());
-
+	delete[] sequence;
+	printf("Training complete\n");
 	/*
 	 * End of traning loop
 	 *
 	 * Now testing the network
 	 *
 	 */
-	shuffle(sequence,4);
+	printf("Initiating testing...\n");
+	int tmpAry[] = {0,1,2,3};
 	for(int t=0;t<4;t++)
 	{
-		net->update(input[sequence[t]]);
-		printf("Desired output: %f ", desiredOutput[sequence[t]]);
-		printf("Output: %f\n",net->get_output()[0]);
+		net->update(input[tmpAry[t]]);
+		printf("Desired output: %.0f ", desiredOutput[tmpAry[t]]);
+		printf("Output: %.0f\n",net->get_output()[0]);
 	}
-	delete[] sequence;
+	printf("Testing complete\n");
 	delete net;
 	return 0;
 }
