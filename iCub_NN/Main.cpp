@@ -14,11 +14,11 @@
 
 #include "Network.h"
 
-double input[4][2] ={
-			{0.0, 0.0},
-			{0.0, 1.0},
-			{1.0, 0.0},
-			{1.0, 1.0}};
+double input[4][3] ={
+			{0.0, 0.0, 0.0},
+			{0.0, 1.0, 0.0},
+			{1.0, 0.0, 0.0},
+			{1.0, 1.0, 0.0}};
 double desiredOutput[4] = {0.0, 0.0, 0.0, 1.0};
 int * sequence;
 
@@ -60,8 +60,8 @@ int main(int argc, char** argv)
 	Network *net;
 	net = new Network(2,3,1);
 	sequence = new int[4];
-	net->set_rho(1.0);
-	net->set_mSEBound(0.05);
+	net->set_rho(0.5);
+	net->set_mSEBound(0.001);
 	net->init();
 	//Training loop
 
@@ -77,7 +77,7 @@ int main(int argc, char** argv)
 			//Backpropagte_error
 			net->backpropagate_error(desiredOutput[sequence[i]]);
 		}
-		//printf("MSE: %f\n",net->get_meanSqrErr()/4);
+		printf("MSE: %f\n",net->get_meanSqrErr()/4);
 	}while((net->get_meanSqrErr()/4.0)>=net->get_mSEBound());
 	delete[] sequence;
 	printf("Training complete\n");
@@ -93,7 +93,7 @@ int main(int argc, char** argv)
 	{
 		net->update(input[tmpAry[t]]);
 		printf("Desired output: %.0f ", desiredOutput[tmpAry[t]]);
-		printf("Output: %.0f\n",net->get_output()[0]);
+		printf("Output: %f\n",net->get_output()[0]);
 	}
 	printf("Testing complete\n");
 	delete net;
