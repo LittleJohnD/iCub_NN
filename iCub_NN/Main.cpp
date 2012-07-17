@@ -6,11 +6,12 @@
  */
 
 #include <iostream>
+#include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
-
+#include <string>
 
 #include "Network.h"
 
@@ -19,10 +20,18 @@ double input[4][3] ={
 			{0.0, 1.0, 0.0},
 			{1.0, 0.0, 0.0},
 			{1.0, 1.0, 0.0}};
+double eyeAngles[5];
+double motorAngles[4];
 double desiredOutput[4] = {0.0, 0.0, 0.0, 1.0};
 int * sequence;
 int iterations;
 long seed = 42949;
+std::ifstream inputFile;
+char linkOpen[7],inputNodeOpen[27],rightEyeTilt[58],rightEyePan[58];
+char leftEyeTilt[58],leftEyePan[58],vergence[58],inputNodeClose[20];
+char outputNodeOpen[28],motorAngle0[59],motorAngle1[59],motorAngle2[59];
+char motorAngle3[59],outputNodeClose[21],linkAtOpen[26],rotMatrix1[61];
+char rotMatrix2[61],rotMatrix3[61],linkAtClose[19],linkClose[8],emptyLn[1];
 
 void shuffle(int* array,int size)
 {
@@ -54,6 +63,66 @@ void shuffle(int* array,int size)
 	delete[]tmpAry;
 	//delete[]usedNum;
 }
+void readInInputFromFile(std::string inputFileName)
+{
+  inputFile.open(inputFileName.c_str());
+  if(inputFile.is_open())
+    {
+      inputFile.getline(linkOpen,7);
+
+      inputFile.getline(inputNodeOpen,27);
+      inputFile.getline(rightEyeTilt,58);
+      inputFile.getline(rightEyePan,58);
+      inputFile.getline(leftEyeTilt,58);
+      inputFile.getline(leftEyePan,58);
+      inputFile.getline(vergence,58);
+      inputFile.getline(inputNodeClose,20);
+
+      inputFile.getline(outputNodeOpen,28);
+      inputFile.getline(motorAngle0,59);
+      inputFile.getline(motorAngle1,59);
+      inputFile.getline(motorAngle2,59);
+      inputFile.getline(motorAngle3,59);
+      inputFile.getline(outputNodeClose,21);
+
+      inputFile.getline(linkAtOpen,26);
+      inputFile.getline(rotMatrix1,61);
+      inputFile.getline(rotMatrix2,61);
+      inputFile.getline(rotMatrix3,61);
+      inputFile.getline(linkAtClose,19);
+
+      inputFile.getline(linkClose,8);
+      inputFile.getline(emptyLn,1);
+    }
+  else
+    {
+      printf("Error: Cannot open input file.");
+      exit(1);
+    }
+  //TODO parse XML
+  for(int i=0;i<=58;i++)
+    {
+      switch(rightEyeTilt[i])
+      {
+        case '\"':
+          double tmpNumber;
+          if(rightEyeTilt[i+1]=='-')
+            {
+              eyeAngles[0]-=0.000001;
+            }
+          for(int a=0;a<8;a++)
+            {
+              tmpNumber+= (rightEyeTilt[i+a+2]/(10*a));
+            }
+          eyeAngles[0]+= tmpNumber;
+          eyeAngles[0]+=0.000001;
+          printf("Right eye Tilt: %f", eyeAngles[0]);
+          break;
+      }
+    }
+
+
+}
 
 int main(int argc, char** argv)
 {
@@ -67,7 +136,7 @@ int main(int argc, char** argv)
 	net->init();
 	iterations=0;
 	//Training loop
-
+	readInInputFromFile("~/Documents/iCub/Programs/elio_sim/my_icub/build/joint_space.xml");
 	do
 	{
 		//Randomise input and reset MSE

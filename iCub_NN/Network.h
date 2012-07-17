@@ -14,9 +14,10 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <sstream>
 
 
-using namespace std;
+
 
 class Network {
 public:
@@ -32,6 +33,12 @@ public:
 	inline void set_mSEBound( double b ){mSEBound=b;}
 	inline double get_mSEBound( void ){return mSEBound;}
 	inline double* get_output( void ){return outputs;}
+	inline std::string to_string (long num)
+	{
+	    std::stringstream ss;
+	    ss << num;
+	    return ss.str();
+	}
 
 private:
 	int INPUT_NEURONS;
@@ -57,6 +64,6 @@ private:
 	double sigmoid(double number);
 	double sigmoid_d(double number);
 
-	ofstream dataOutput;
+	std::ofstream dataOutput;
 };
 #endif /* NETWORK_H_ */

@@ -6,7 +6,6 @@
  */
 
 #include "Network.h"
-using namespace std;
 
 Network::Network(int num_input, int num_hidden, int num_output, long seed)
 {
@@ -36,8 +35,13 @@ Network::Network(int num_input, int num_hidden, int num_output, long seed)
 
 	err_out = new double [OUTPUT_NEURONS];
 	err_hid = new double [HIDDEN_NEURONS];
-
-	dataOutput.open ("mseData.csv");
+	std::string outputFileName = "mseData"+to_string(seed)+".csv";
+	dataOutput.open (outputFileName.c_str());
+	if(!dataOutput.is_open())
+	  {
+	    printf("Error: Cannot open input file.");
+	    exit(1);
+	  }
 }
 
 Network::~Network()
