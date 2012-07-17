@@ -15,6 +15,7 @@
 #include <time.h>
 #include <math.h>
 #include <sstream>
+#include <vector>
 
 
 
@@ -24,7 +25,7 @@ public:
 	Network(int num_input, int num_hidden, int num_output, long seed);
 	virtual ~Network();
 	void init();
-	void update(double *input_vector);
+	void update(std::vector< std::vector<double> > &input_vector,double place);
 	void backpropagate_error(double teaching_input)/*Due to only one output(double *teaching_input)*/;
 	void printData(int iter);
 	inline void set_rho( double r){RHO = r;}

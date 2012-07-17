@@ -92,29 +92,27 @@ void Network::init() {
 	dataOutput <<"Iterations,MSE "<<"\n";
 }
 
-void Network::update( double *input_vector)
+void Network::update( std::vector< std::vector<double> > &input_vector, double place)
 {
-	//calculate outputs for the hidden layer
-	for(int h=0;h<HIDDEN_NEURONS;h++)
-	{
-		hidden[h]= w_h_b[h];
-		for(int i=0;i<INPUT_NEURONS;i++)
-		{
-			hidden[h]+=(w_h_i[h][i]*input_vector[i]);
-		}
-		hidden[h]=sigmoid(hidden[h]);
-	}
-	//calculate outputs for the output layer
-	for(int out=0;out<OUTPUT_NEURONS;out++)
-	{
-		outputs[out]=w_o_b[out];
-		for(int h=0;h<HIDDEN_NEURONS;h++)
-		{
-			outputs[out]+=w_o_h[out][h]*hidden[h];
-		}
-		outputs[out]=sigmoid(outputs[out]);
-		//printf("Output %d: %f\n",out,outputs[out]);
-	}
+  //calculate outputs for the hidden layer
+  for(int h=0;h<HIDDEN_NEURONS;h++)
+  {
+    hidden[h]= w_h_b[h];
+    for(int i=0;i<INPUT_NEURONS;i++)
+      hidden[h]+=(w_h_i[h][i]*input_vector[place][i]);
+    hidden[h]=sigmoid(hidden[h]);
+  }
+  //calculate outputs for the output layer
+  for(int out=0;out<OUTPUT_NEURONS;out++)
+  {
+          outputs[out]=w_o_b[out];
+          for(int h=0;h<HIDDEN_NEURONS;h++)
+          {
+                  outputs[out]+=w_o_h[out][h]*hidden[h];
+          }
+          outputs[out]=sigmoid(outputs[out]);
+          //printf("Output %d: %f\n",out,outputs[out]);
+  }
 }
 
 double Network::sigmoid(double number)
