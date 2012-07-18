@@ -125,16 +125,14 @@ double Network::sigmoid_d(double number)
 	return (1.0 - number) * number;
 }
 
-void Network::backpropagate_error(double teaching_input)/*Due to there only being one output (double *teaching_input)*/
+void Network::backpropagate_error(std::vector< std::vector<double> > &teachingInput_vector,double place)
 {
 	int out,hid,inp;
 
 	//Compute the error for the output nodes
 	for(out=0;out<OUTPUT_NEURONS;out++)
 	{
-		double tmp_err = (teaching_input-outputs[out]);/*Due to there only being one output (teaching_input[out]-outputs[out]);*/
-		//printf("Teaching-output: %f , output: %f tin: %f\n", tmp_err,outputs[out],teaching_input);
-
+		double tmp_err = (teachingInput_vector[place][out]-outputs[out]);
 		err_out[out] = tmp_err*sigmoid_d(outputs[out]);
 		meanSqrErr += tmp_err *tmp_err;
 	}
@@ -171,7 +169,7 @@ void Network::backpropagate_error(double teaching_input)/*Due to there only bein
 	}
 }
 
-void Network::printData(int iter)
+void Network::printData(int iter,int vectSize)
 {
-  dataOutput <<iter<<","<< (meanSqrErr/4) <<"\n";
+  dataOutput <<iter<<","<< (meanSqrErr/double(vectSize)) <<"\n";
 }

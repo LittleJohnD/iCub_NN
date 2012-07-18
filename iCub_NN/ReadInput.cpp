@@ -20,13 +20,14 @@ ReadInput::~ReadInput()
   // TODO Auto-generated destructor stub
 }
 
-void ReadInput::readInInputFromFile(string inputFileName,std::vector< std::vector<double> > &input_vector,double place)
+void ReadInput::readInInputFromFile(string inputFileName,std::vector< std::vector<double> > &input_vector,std::vector< std::vector<double> > &output_vector)
 {
   TiXmlDocument jSpace(inputFileName.c_str());
   string elemName;
   TiXmlElement* elem;
   const char* attr;
   int count =0;
+  vector<double>tmpVector;
 
   if(jSpace.LoadFile())
     {
@@ -40,22 +41,48 @@ void ReadInput::readInInputFromFile(string inputFileName,std::vector< std::vecto
             for(elem = link->FirstChildElement(); elem != NULL; elem = elem->NextSiblingElement())
             {
               elemName = elem->Value();
-              if(elemName == "LinkAttr")
+              if(elemName == "InputNode")
+                {
+                  tmpVector.clear();
+                  for(TiXmlElement* e = elem->FirstChildElement("Component"); e != NULL; e = e->NextSiblingElement("Component"))
+                    {
+                      attr = e->Attribute("Value");
+                      if(attr != NULL)
+                        {
+                          tmpVector.push_back(atof(attr));
+                          //printf("Component : %s\n",attr); // Do stuff with it
+                        }
+                    }
+                  for(TiXmlElement* e = elem->FirstChildElement("Component"); e != NULL; e = e->NextSiblingElement("Component"))
+                    {
+                      attr = e->Attribute("Value");
+                      if(attr != NULL)
+                        {
+                          tmpVector.push_back(atof(attr));
+                         // Do stuff with it
+                        }
+                    }
+
+                  output_vector.push_back(tmpVector);
+                }
+              else if(elemName == "LinkAttr")
                 {
                   count++;
-                  vector<double>tmpVector;
+                  tmpVector.clear();
                   for(TiXmlElement* e = elem->FirstChildElement("LinkAttrValue"); e != NULL; e = e->NextSiblingElement("LinkAttrValue"))
                   {
                       attr = e->Attribute("LinkValue");
                       if(attr != NULL)
                         {
 
-                          tmpVector.push_back(double(atoi(attr)));
+                          tmpVector.push_back(double(atof(attr)));
                           //printf("Component : %s\n",attr); // Do stuff with it
                         }
                   }
                   input_vector.push_back(tmpVector);
                 }
+              else if(!(elemName == "OutputNode"))
+                printf("Error reading in File\n");
             }
         }
 
@@ -64,5 +91,6 @@ void ReadInput::readInInputFromFile(string inputFileName,std::vector< std::vecto
     printf("Failed to load file \"%s\"\n", inputFileName.c_str());
   jSpace.Clear();
   printf("Count: %d\n",count);
-  printf("Vector size: %d\n", input_vector.size());
+  printf("Input Vector size: %d\n", input_vector.size());
+  printf("Output Vector size: %d\n", output_vector.size());
 }

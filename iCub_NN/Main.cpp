@@ -20,12 +20,15 @@
 using namespace std;
 
 vector< vector<double> > input;
+vector< vector<double> > output;
 double eyeAngles[5];
 double motorAngles[4];
 double desiredOutput[4] = {0.0, 0.0, 0.0, 1.0};
 int * sequence;
 int iterations;
 long seed = 42949;
+int vectSize=0;
+int trainingVectSize=0;
 
 void shuffle(int* array,int size)
 {
@@ -72,29 +75,32 @@ int main(int argc, char** argv)
 	net->init();
 	iterations=0;
 	//Training loop
-	readIn->readInInputFromFile("joint_space.xml",input,0);
+	readIn->readInInputFromFile("joint_space.xml",input,output);
+	vectSize= input.size();
+	trainingVectSize = vectSize * 0.75;
+	vectSize -= trainingVectSize;
 	do
 	{
           //Randomise input and reset MSE
-          shuffle(sequence,input.size());
+          shuffle(sequence,vectSize);
           net->reset_meanSqrErr();
-          for(int i = 0; i < input.size(); i++)
+          for(int i = 0; i < vectSize; i++)
           {
                   //Feed this data set forward;
                   net->update(input,sequence[i]);
                   //Backpropagte_error
-                  //net->backpropagate_error(desiredOutput[sequence[i]]);
-                  printf("Print instead of back_prop\n");
+                  net->backpropagate_error(output,sequence[i]);
+                  //printf("Print instead of back_prop\n");
           }
           iterations++;
           if(iterations%5000==0)
-            net->printData(iterations);
+            net->printData(iterations,vectSize);
           if(iterations%500000==0)
             printf("\n");
           else if(iterations%5000==0)
             printf(".");
-	}while((net->get_meanSqrErr()/double(input.size()))>=net->get_mSEBound());
-	net->printData(iterations);
+	}while((net->get_meanSqrErr()/double(vectSize))>=net->get_mSEBound());
+	net->printData(iterations,vectSize);
 	delete[] sequence;
 	printf("\nTraining complete\n");
 	/*
@@ -104,12 +110,16 @@ int main(int argc, char** argv)
 	 *
 	 */
 	printf("Initiating testing...\n");
-	int tmpAry[4] = {0,1,2,3};
-	for(int t=0;t<4;t++)
+	for(int t=0;t<trainingVectSize;t++)
 	{
-		net->update(input,tmpAry[t]);
-		printf("Desired output: %.0f ", desiredOutput[tmpAry[t]]);
-		printf("Output: %f\n",net->get_output()[0]);
+		net->update(input,(vectSize+t));
+		printf("Desired output: ");
+		for(int d= 0;d<(output[vectSize+t].size());d++)
+		  {
+		    printf(" %f ", output[vectSize+t][d]);
+		    printf("Output: %f\n",net->get_output()[d]);
+		  }
+		printf("\n\n\n");
 	}
 	printf("Testing complete\n");
 	delete net;

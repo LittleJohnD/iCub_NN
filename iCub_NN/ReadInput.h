@@ -20,7 +20,7 @@ class ReadInput
 {
 public:
   ReadInput();
-  void readInInputFromFile(std::string inputFileName , std::vector< std::vector<double> > &input_vector , double place);
+  void readInInputFromFile(std::string inputFileName,std::vector< std::vector<double> > &input_vector,std::vector< std::vector<double> > &output_vector);
 
   virtual
   ~ReadInput();

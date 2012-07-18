@@ -26,8 +26,8 @@ public:
 	virtual ~Network();
 	void init();
 	void update(std::vector< std::vector<double> > &input_vector,double place);
-	void backpropagate_error(double teaching_input)/*Due to only one output(double *teaching_input)*/;
-	void printData(int iter);
+	void backpropagate_error(std::vector< std::vector<double> > &teachingInput_vector,double place)/*Due to only one output(double *teaching_input)*/;
+	void printData(int iter,int vectSize);
 	inline void set_rho( double r){RHO = r;}
 	inline void reset_meanSqrErr( void ){ meanSqrErr = 0.0;}
 	inline double get_meanSqrErr( void ){ return meanSqrErr;}
