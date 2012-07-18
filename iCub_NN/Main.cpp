@@ -19,7 +19,7 @@
 
 using namespace std;
 
-vector< vector<double> > input(2,vector<double>(3,0));
+vector< vector<double> > input;
 double eyeAngles[5];
 double motorAngles[4];
 double desiredOutput[4] = {0.0, 0.0, 0.0, 1.0};
@@ -66,24 +66,25 @@ int main(int argc, char** argv)
 	ReadInput *readIn;
 	net = new Network(2,3,1,seed);
 	readIn = new ReadInput();
-	sequence = new int[4];
+	sequence = new int[input.size()];
 	net->set_rho(0.5);
 	net->set_mSEBound(0.001);
 	net->init();
 	iterations=0;
 	//Training loop
-	readIn->readInInputFromFile("joint_space.xml");
+	readIn->readInInputFromFile("joint_space.xml",input,0);
 	do
 	{
           //Randomise input and reset MSE
-          shuffle(sequence,4);
+          shuffle(sequence,input.size());
           net->reset_meanSqrErr();
-          for(int i = 0; i < 4; i++)
+          for(int i = 0; i < input.size(); i++)
           {
                   //Feed this data set forward;
-                  net->update(input,0);//sequence[i]);
+                  net->update(input,sequence[i]);
                   //Backpropagte_error
-                  net->backpropagate_error(desiredOutput[sequence[i]]);
+                  //net->backpropagate_error(desiredOutput[sequence[i]]);
+                  printf("Print instead of back_prop\n");
           }
           iterations++;
           if(iterations%5000==0)
@@ -92,7 +93,7 @@ int main(int argc, char** argv)
             printf("\n");
           else if(iterations%5000==0)
             printf(".");
-	}while((net->get_meanSqrErr()/4.0)>=net->get_mSEBound());
+	}while((net->get_meanSqrErr()/double(input.size()))>=net->get_mSEBound());
 	net->printData(iterations);
 	delete[] sequence;
 	printf("\nTraining complete\n");

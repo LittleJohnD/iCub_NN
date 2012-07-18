@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <string>
+#include <vector>
 #include "tinyxml.h"
 
 
@@ -19,7 +20,7 @@ class ReadInput
 {
 public:
   ReadInput();
-  void readInInputFromFile(std::string inputFileName);
+  void readInInputFromFile(std::string inputFileName , std::vector< std::vector<double> > &input_vector , double place);
 
   virtual
   ~ReadInput();
