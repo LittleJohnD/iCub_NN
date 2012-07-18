@@ -90,7 +90,7 @@ void ReadInput::readInInputFromFile(string inputFileName,std::vector< std::vecto
   else
     printf("Failed to load file \"%s\"\n", inputFileName.c_str());
   jSpace.Clear();
-  printf("Count: %d\n",count);
-  printf("Input Vector size: %d\n", input_vector.size());
-  printf("Output Vector size: %d\n", output_vector.size());
+//  printf("Count: %d\n",count);
+//  printf("Input Vector size: %d\n", input_vector.size());
+//  printf("Output Vector size: %d\n", output_vector.size());
 }

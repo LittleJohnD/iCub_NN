@@ -16,6 +16,7 @@
 
 #include "Network.h"
 #include "ReadInput.h"
+#include "Normalise.h"
 
 using namespace std;
 
