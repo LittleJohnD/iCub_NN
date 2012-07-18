@@ -67,15 +67,17 @@ int main(int argc, char** argv)
 	printf("Initiating training\n");
 	Network *net;
 	ReadInput *readIn;
-	net = new Network(2,3,1,seed);
 	readIn = new ReadInput();
+	readIn->readInInputFromFile("joint_space.xml",input,output);
+	net = new Network(3,10,9,seed);
+
 	sequence = new int[input.size()];
 	net->set_rho(0.5);
 	net->set_mSEBound(0.001);
 	net->init();
 	iterations=0;
 	//Training loop
-	readIn->readInInputFromFile("joint_space.xml",input,output);
+
 	vectSize= input.size();
 	trainingVectSize = vectSize * 0.75;
 	vectSize -= trainingVectSize;
@@ -96,9 +98,10 @@ int main(int argc, char** argv)
           if(iterations%5000==0)
             net->printData(iterations,vectSize);
           if(iterations%500000==0)
-            printf("\n");
+            printf("\n %f \n",net->get_meanSqrErr());
           else if(iterations%5000==0)
             printf(".");
+
 	}while((net->get_meanSqrErr()/double(vectSize))>=net->get_mSEBound());
 	net->printData(iterations,vectSize);
 	delete[] sequence;
