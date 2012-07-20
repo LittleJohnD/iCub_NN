@@ -6,6 +6,7 @@
  */
 
 #include "Network.h"
+using namespace std;
 
 Network::Network(int num_input, int num_hidden, int num_output, long seed)
 {
@@ -92,14 +93,17 @@ void Network::init() {
 	dataOutput <<"Iterations,MSE "<<"\n";
 }
 
-void Network::update( std::vector< std::vector<double> > &input_vector, double place)
+void Network::update(std::vector<double>&input_vector)
 {
   //calculate outputs for the hidden layer
   for(int h=0;h<HIDDEN_NEURONS;h++)
   {
     hidden[h]= w_h_b[h];
     for(int i=0;i<INPUT_NEURONS;i++)
-      hidden[h]+=(w_h_i[h][i]*input_vector[place][i]);
+      {
+        //cerr<<"Input Vector:"<<input_vector[place][i]<<endl;
+        hidden[h]+=(w_h_i[h][i]*input_vector[i]);
+      }
     hidden[h]=sigmoid(hidden[h]);
   }
   //calculate outputs for the output layer
@@ -125,14 +129,14 @@ double Network::sigmoid_d(double number)
 	return (1.0 - number) * number;
 }
 
-void Network::backpropagate_error(std::vector< std::vector<double> > &teachingInput_vector,double place)
+void Network::backpropagate_error(std::vector<double> &teachingInput_vector)
 {
 	int out,hid,inp;
 
 	//Compute the error for the output nodes
 	for(out=0;out<OUTPUT_NEURONS;out++)
 	{
-		double tmp_err = (teachingInput_vector[place][out]-outputs[out]);
+		double tmp_err = (teachingInput_vector[out]-outputs[out]);
 		err_out[out] = tmp_err*sigmoid_d(outputs[out]);
 		meanSqrErr += tmp_err *tmp_err;
 	}
