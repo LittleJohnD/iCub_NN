@@ -1,0 +1,189 @@
+ <Link>
+ 	<InputNode Dim="5">
+ 		<Component Value="-0.536742" NodeIdx="0"/>
+ 		<Component Value="-0.241077" NodeIdx="1"/>
+ 		<Component Value="16.711092" NodeIdx="2"/>
+ 	</InputNode>
+ 	<OutputNode Dim="4">
+ 		<Component Value="-95.000003" NodeIdx="0"/>
+ 		<Component Value="5.000000" NodeIdx="1"/>
+ 		<Component Value="-35.000001" NodeIdx="2"/>
+ 		<Component Value="16.000000" NodeIdx="3"/>
+ 	</OutputNode>
+ 	<LinkAttr Dim="3">
+ 		<LinkAttrValue LinkValue="0.783306" Idx="0"/>
+ 		<LinkAttrValue LinkValue="2.956293" Idx="1"/>
+ 		<LinkAttrValue LinkValue="5.152041" Idx="2"/>
+ 	</LinkAttr>
+ </Link>
+
+ <Link>
+ 	<InputNode Dim="5">
+ 		<Component Value="-2.613162" NodeIdx="0"/>
+ 		<Component Value="-0.048720" NodeIdx="1"/>
+ 		<Component Value="16.753827" NodeIdx="2"/>
+ 	</InputNode>
+ 	<OutputNode Dim="4">
+ 		<Component Value="-95.000003" NodeIdx="0"/>
+ 		<Component Value="5.000000" NodeIdx="1"/>
+ 		<Component Value="-35.000001" NodeIdx="2"/>
+ 		<Component Value="17.000000" NodeIdx="3"/>
+ 	</OutputNode>
+ 	<LinkAttr Dim="3">
+ 		<LinkAttrValue LinkValue="0.802284" Idx="0"/>
+ 		<LinkAttrValue LinkValue="2.953955" Idx="1"/>
+ 		<LinkAttrValue LinkValue="5.166719" Idx="2"/>
+ 	</LinkAttr>
+ </Link>
+
+ <Link>
+ 	<InputNode Dim="5">
+ 		<Component Value="2.943833" NodeIdx="0"/>
+ 		<Component Value="0.015201" NodeIdx="1"/>
+ 		<Component Value="16.734381" NodeIdx="2"/>
+ 	</InputNode>
+ 	<OutputNode Dim="4">
+ 		<Component Value="-95.000003" NodeIdx="0"/>
+ 		<Component Value="5.000000" NodeIdx="1"/>
+ 		<Component Value="-34.000001" NodeIdx="2"/>
+ 		<Component Value="15.000000" NodeIdx="3"/>
+ 	</OutputNode>
+ 	<LinkAttr Dim="3">
+ 		<LinkAttrValue LinkValue="0.762058" Idx="0"/>
+ 		<LinkAttrValue LinkValue="2.957567" Idx="1"/>
+ 		<LinkAttrValue LinkValue="5.140083" Idx="2"/>
+ 	</LinkAttr>
+ </Link>
+
+ <Link>
+ 	<InputNode Dim="5">
+ 		<Component Value="3.133090" NodeIdx="0"/>
+ 		<Component Value="0.000652" NodeIdx="1"/>
+ 		<Component Value="16.750343" NodeIdx="2"/>
+ 	</InputNode>
+ 	<OutputNode Dim="4">
+ 		<Component Value="-95.000003" NodeIdx="0"/>
+ 		<Component Value="5.000000" NodeIdx="1"/>
+ 		<Component Value="-33.000001" NodeIdx="2"/>
+ 		<Component Value="15.000000" NodeIdx="3"/>
+ 	</OutputNode>
+ 	<LinkAttr Dim="3">
+ 		<LinkAttrValue LinkValue="0.759723" Idx="0"/>
+ 		<LinkAttrValue LinkValue="2.956912" Idx="1"/>
+ 		<LinkAttrValue LinkValue="5.142842" Idx="2"/>
+ 	</LinkAttr>
+ </Link>
+
+ <Link>
+ 	<InputNode Dim="5">
+ 		<Component Value="3.133469" NodeIdx="0"/>
+ 		<Component Value="0.000629" NodeIdx="1"/>
+ 		<Component Value="16.767010" NodeIdx="2"/>
+ 	</InputNode>
+ 	<OutputNode Dim="4">
+ 		<Component Value="-95.000003" NodeIdx="0"/>
+ 		<Component Value="5.000000" NodeIdx="1"/>
+ 		<Component Value="-32.000001" NodeIdx="2"/>
+ 		<Component Value="15.000000" NodeIdx="3"/>
+ 	</OutputNode>
+ 	<LinkAttr Dim="3">
+ 		<LinkAttrValue LinkValue="0.757340" Idx="0"/>
+ 		<LinkAttrValue LinkValue="2.956252" Idx="1"/>
+ 		<LinkAttrValue LinkValue="5.145559" Idx="2"/>
+ 	</LinkAttr>
+ </Link>
+
+ <Link>
+ 	<InputNode Dim="5">
+ 		<Component Value="3.133305" NodeIdx="0"/>
+ 		<Component Value="0.000648" NodeIdx="1"/>
+ 		<Component Value="16.783676" NodeIdx="2"/>
+ 	</InputNode>
+ 	<OutputNode Dim="4">
+ 		<Component Value="-95.000003" NodeIdx="0"/>
+ 		<Component Value="5.000000" NodeIdx="1"/>
+ 		<Component Value="-31.000001" NodeIdx="2"/>
+ 		<Component Value="15.000000" NodeIdx="3"/>
+ 	</OutputNode>
+ 	<LinkAttr Dim="3">
+ 		<LinkAttrValue LinkValue="0.754910" Idx="0"/>
+ 		<LinkAttrValue LinkValue="2.955588" Idx="1"/>
+ 		<LinkAttrValue LinkValue="5.148232" Idx="2"/>
+ 	</LinkAttr>
+ </Link>
+
+ <Link>
+ 	<InputNode Dim="5">
+ 		<Component Value="3.133144" NodeIdx="0"/>
+ 		<Component Value="0.000667" NodeIdx="1"/>
+ 		<Component Value="16.800340" NodeIdx="2"/>
+ 	</InputNode>
+ 	<OutputNode Dim="4">
+ 		<Component Value="-95.000003" NodeIdx="0"/>
+ 		<Component Value="5.000000" NodeIdx="1"/>
+ 		<Component Value="-30.000001" NodeIdx="2"/>
+ 		<Component Value="15.000000" NodeIdx="3"/>
+ 	</OutputNode>
+ 	<LinkAttr Dim="3">
+ 		<LinkAttrValue LinkValue="0.752434" Idx="0"/>
+ 		<LinkAttrValue LinkValue="2.954920" Idx="1"/>
+ 		<LinkAttrValue LinkValue="5.150862" Idx="2"/>
+ 	</LinkAttr>
+ </Link>
+
+ <Link>
+ 	<InputNode Dim="5">
+ 		<Component Value="3.132986" NodeIdx="0"/>
+ 		<Component Value="0.000686" NodeIdx="1"/>
+ 		<Component Value="16.816994" NodeIdx="2"/>
+ 	</InputNode>
+ 	<OutputNode Dim="4">
+ 		<Component Value="-95.000003" NodeIdx="0"/>
+ 		<Component Value="5.000000" NodeIdx="1"/>
+ 		<Component Value="-29.000001" NodeIdx="2"/>
+ 		<Component Value="15.000000" NodeIdx="3"/>
+ 	</OutputNode>
+ 	<LinkAttr Dim="3">
+ 		<LinkAttrValue LinkValue="0.749912" Idx="0"/>
+ 		<LinkAttrValue LinkValue="2.954247" Idx="1"/>
+ 		<LinkAttrValue LinkValue="5.153447" Idx="2"/>
+ 	</LinkAttr>
+ </Link>
+
+ <Link>
+ 	<InputNode Dim="5">
+ 		<Component Value="3.132832" NodeIdx="0"/>
+ 		<Component Value="0.000704" NodeIdx="1"/>
+ 		<Component Value="16.833635" NodeIdx="2"/>
+ 	</InputNode>
+ 	<OutputNode Dim="4">
+ 		<Component Value="-95.000003" NodeIdx="0"/>
+ 		<Component Value="5.000000" NodeIdx="1"/>
+ 		<Component Value="-28.000001" NodeIdx="2"/>
+ 		<Component Value="15.000000" NodeIdx="3"/>
+ 	</OutputNode>
+ 	<LinkAttr Dim="3">
+ 		<LinkAttrValue LinkValue="0.747345" Idx="0"/>
+ 		<LinkAttrValue LinkValue="2.953571" Idx="1"/>
+ 		<LinkAttrValue LinkValue="5.155986" Idx="2"/>
+ 	</LinkAttr>
+ </Link>
+
+ <Link>
+ 	<InputNode Dim="5">
+ 		<Component Value="3.132681" NodeIdx="0"/>
+ 		<Component Value="0.000723" NodeIdx="1"/>
+ 		<Component Value="16.850257" NodeIdx="2"/>
+ 	</InputNode>
+ 	<OutputNode Dim="4">
+ 		<Component Value="-95.000003" NodeIdx="0"/>
+ 		<Component Value="5.000000" NodeIdx="1"/>
+ 		<Component Value="-27.000001" NodeIdx="2"/>
+ 		<Component Value="15.000000" NodeIdx="3"/>
+ 	</OutputNode>
+ 	<LinkAttr Dim="3">
+ 		<LinkAttrValue LinkValue="0.744734" Idx="0"/>
+ 		<LinkAttrValue LinkValue="2.952891" Idx="1"/>
+ 		<LinkAttrValue LinkValue="5.158479" Idx="2"/>
+ 	</LinkAttr>
+ </Link>
