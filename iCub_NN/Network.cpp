@@ -8,7 +8,7 @@
 #include "Network.h"
 using namespace std;
 
-Network::Network(int num_input, int num_hidden, int num_output, long seed)
+Network::Network(int num_input, int num_hidden, int num_output, long *seed)
 {
 	INPUT_NEURONS = num_input;
 	HIDDEN_NEURONS = num_hidden;
@@ -36,11 +36,11 @@ Network::Network(int num_input, int num_hidden, int num_output, long seed)
 
 	err_out = new double [OUTPUT_NEURONS];
 	err_hid = new double [HIDDEN_NEURONS];
-	std::string outputFileName = "mseData"+to_string(seed)+".csv";
+	std::string outputFileName = "mseData"+seed+".csv";
 	dataOutput.open (outputFileName.c_str());
 	if(!dataOutput.is_open())
 	  {
-	    printf("Error: Cannot open input file.");
+	    printf("Error: Cannot open input file.\n");
 	    exit(1);
 	  }
 }
@@ -73,7 +73,6 @@ Network::~Network()
 }
 
 void Network::init() {
-	srand (time(NULL));
 	for (int h = 0; h < HIDDEN_NEURONS; h++){
 		for (int i = 0; i < INPUT_NEURONS; i++){
 			w_h_i[h][i] = (double(rand()%100)/100 - 0.5);
@@ -93,7 +92,7 @@ void Network::init() {
 	dataOutput <<"Iterations,MSE "<<"\n";
 }
 
-void Network::update(std::vector<double>&input_vector)
+void Network::update(std::vector<double> input_vector)
 {
   //calculate outputs for the hidden layer
   for(int h=0;h<HIDDEN_NEURONS;h++)
@@ -101,7 +100,7 @@ void Network::update(std::vector<double>&input_vector)
     hidden[h]= w_h_b[h];
     for(int i=0;i<INPUT_NEURONS;i++)
       {
-        //cerr<<"Input Vector:"<<input_vector[place][i]<<endl;
+        //cout<<"Input Vector:"<<input_vector[i]<<endl;
         hidden[h]+=(w_h_i[h][i]*input_vector[i]);
       }
     hidden[h]=sigmoid(hidden[h]);
@@ -129,7 +128,7 @@ double Network::sigmoid_d(double number)
 	return (1.0 - number) * number;
 }
 
-void Network::backpropagate_error(std::vector<double> &teachingInput_vector)
+void Network::backpropagate_error(std::vector<double> teachingInput_vector)
 {
 	int out,hid,inp;
 

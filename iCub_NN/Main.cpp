@@ -6,13 +6,17 @@
  */
 
 #include <iostream>
+#include <algorithm>
+#include <functional>
 #include <fstream>
+#include <string>
+#include <vector>
+#include <ctime>
+#include <cstdlib>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
-#include <string>
-#include <vector>
 
 #include "tinyxml.h"
 
@@ -22,13 +26,13 @@ using namespace std;
 
 vector< vector<double> > input;
 vector< vector<double> > output;
-vector< vector<double> > minMaxInput(10,vector<double>(2));
-vector< vector<double> > minMaxOutput(10,vector<double>(2));
+vector< vector<double> > minMaxInput(11,vector<double>(2));
+vector< vector<double> > minMaxOutput(11,vector<double>(2));
 double eyeAngles[5];
 double motorAngles[4];
 int * sequence;
 int iterations;
-long seed = 42949;
+long *seed = 42949;
 int vectSize=0;
 int trainingVectSize=0;
 
@@ -111,98 +115,21 @@ void readInInputFromFile( void )
 //  printf("Input Vector size: %d\n", input.size());
 //  cout<<"Number of inputs: "<<input[0].size()<<" Number of outputs: "<<output[0].size()<<endl;
 //  printf("Output Vector size: %d\n", output.size());
-}
-void positiveData(string io)
-{
-  if(io=="input")
-      {
-        for(unsigned int i=0;i<input.size();i++)
-          {
-            for(unsigned int j=0;j<(input[i].size());j++)
-              {
-                input[i][j]+=500;
-              }
-          }
-      }
-    else if(io == "output")
-      {
-        for(unsigned int i=0;i<output.size();i++)
-          {
-            for(unsigned int j=0;j<(output[i].size());j++)
-              {
-                switch(j)
-                {
-                  case 1:
-                    output[i][j]+=35;
-                     break;
-                  case 2:
-                    output[i][j]+=40;
-                      break;
-                  case 4:
-                    output[i][j]+=95;
-                      break;
-                  case 6:
-                    output[i][j]+=35;
-                      break;
-                  default:
-                    break;
-                }
-              }
-          }
-      }
-    else
-      {
-        cerr<<"Error making data positive"<<endl;
-      }
-}
-
-void restoreData(string io)
-{
-  if(io=="input")
-      {
-        for(unsigned int i=0;i<input.size();i++)
-          {
-            for(unsigned int j=0;j<(input[i].size());j++)
-              {
-                input[i][j]-=500;
-              }
-          }
-      }
-    else if(io == "output")
-      {
-        for(unsigned int i=0;i<output.size();i++)
-          {
-            for(unsigned int j=0;j<(output[i].size());j++)
-              {
-                switch(j)
-                {
-                  case 1:
-                    output[i][j]-=35;
-                      break;
-                  case 2:
-                    output[i][j]-=40;
-                      break;
-                  case 4:
-                    output[i][j]-=95;
-                      break;
-                  case 6:
-                    output[i][j]-=35;
-                      break;
-                  default:
-                    break;
-                }
-              }
-          }
-      }
-    else
-      {
-        cerr<<"Error restoring data"<<endl;
-      }
+//  for(unsigned int n =0;n<input.size();n++)
+//    {
+//      printf("Input Vector[%d]:\n",n);
+//      for(unsigned int i=0;i<input[n].size();i++)
+//        printf("\t %d: %f\t",i, input[n][i]);
+//      printf("\n");
+//      printf("Output Vector[%d]:\n",n);
+//      for(unsigned int o=0;o<output[n].size();o++)
+//        printf("\t %d: %f\t",o,output[n][o]);
+//      printf("\n");
+//    }
 }
 
 void findMinMax(string io)
 {
-  positiveData(io);
   if(io=="input")
     {
       for(unsigned int i=0;i<input.size();i++)
@@ -211,25 +138,15 @@ void findMinMax(string io)
             {
 
               if(input[i][j]>minMaxInput[j][1])
-                {
-                  //cout<<"more than"<<endl;
-                  minMaxInput[j][1]=input[i][j];
-                }
+                minMaxInput[j][1]=input[i][j];
               else if(input[i][j]<minMaxInput[j][0])
-                {
-                  //cout<<"less than"<<endl;
-                  minMaxInput[j][0]=input[i][j];
-                }
-
+                minMaxInput[j][0]=input[i][j];
             }
           if(i==0)
             {
               for(unsigned int k=0;k<(input[i].size());k++)
-                {
-                  minMaxInput[k][0]=minMaxInput[k][1];
-                }
+                minMaxInput[k][0]=minMaxInput[k][1];
             }
-          //cout<<endl<<endl;
         }
     }
   else if(io == "output")
@@ -239,27 +156,19 @@ void findMinMax(string io)
           for(unsigned int j=0;j<(output[i].size());j++)
             {
               if(output[i][j]>minMaxOutput[j][1])
-                {
-                  minMaxOutput[j][1]=output[i][j];
-                }
+                minMaxOutput[j][1]=output[i][j];
               else if(output[i][j]<minMaxOutput[j][0])
-                {
-                  minMaxOutput[j][0]=output[i][j];
-                }
+                minMaxOutput[j][0]=output[i][j];
             }
           if(i==0)
             {
               for(unsigned int k=0;k<(output[i].size());k++)
-                {
-                  minMaxOutput[k][0]=minMaxOutput[k][1];
-                }
+                minMaxOutput[k][0]=minMaxOutput[k][1];
             }
         }
     }
   else
-    {
-      cerr<<"Error finding minMax"<<endl;
-    }
+    cerr<<"Error finding minMax"<<endl;
 
 }
 void normaliseData(string io)
@@ -270,16 +179,11 @@ void normaliseData(string io)
         {
           for(unsigned int j = 0;j<input[i].size();j++)
             {
-              //cout<<"Before: "<<input[i][j];
               if(minMaxInput[j][0]!=minMaxInput[j][1])
-                {
-                  input[i][j]=((input[i][j]-minMaxInput[j][0])/(minMaxInput[j][1]-minMaxInput[j][0]));
-                }
+                input[i][j]=((input[i][j]-minMaxInput[j][0])/(minMaxInput[j][1]-minMaxInput[j][0]));
               else
                 input[i][j]=1;
-              //cout<<" After: "<<input[i][j]<< endl;
             }
-          //cout<<endl<<endl;
         }
     }
   else if(io == "output")
@@ -288,21 +192,15 @@ void normaliseData(string io)
         {
           for(unsigned int j = 0;j<output[i].size();j++)
             {
-              //cout<<"Before: "<<output[i][j];
               if(minMaxOutput[j][0]!=minMaxOutput[j][1])
-                {
-                  output[i][j]=((output[i][j]-minMaxOutput[j][0])/(minMaxOutput[j][1]-minMaxOutput[j][0]));
-                }
+                output[i][j]=((output[i][j]-minMaxOutput[j][0])/(minMaxOutput[j][1]-minMaxOutput[j][0]));
               else
                 output[i][j]=1;
-              //cout<<" After: "<<output[i][j]<< endl;
             }
         }
     }
   else
-    {
-      cerr<<"Error Normalising Data"<<endl;
-    }
+    cerr<<"Error Normalising Data"<<endl;
 
 }
 void unNormaliseData(string io)
@@ -314,12 +212,9 @@ void unNormaliseData(string io)
           for(unsigned int j = 0;j<input[i].size();j++)
             {
               if(minMaxInput[j][0]!=minMaxInput[j][1])
-                {
-                  input[i][j]=((input[i][j]*(minMaxInput[j][1]-minMaxInput[j][0]))+minMaxInput[j][0]);
-                }
+                input[i][j]=((input[i][j]*(minMaxInput[j][1]-minMaxInput[j][0]))+minMaxInput[j][0]);
               else
                 input[i][j]=minMaxInput[j][1];
-
             }
         }
     }
@@ -330,20 +225,14 @@ void unNormaliseData(string io)
           for(unsigned int j = 0;j<output[i].size();j++)
             {
               if(minMaxOutput[j][0]!=minMaxOutput[j][1])
-                {
-                  output[i][j]=((output[i][j]*(minMaxOutput[j][1]-minMaxOutput[j][0]))+minMaxOutput[j][0]);
-                }
+                output[i][j]=((output[i][j]*(minMaxOutput[j][1]-minMaxOutput[j][0]))+minMaxOutput[j][0]);
               else
                 output[i][j]=minMaxOutput[j][1];
             }
         }
     }
   else
-    {
-      cerr<<"Error Unnormalising Data"<<endl;
-    }
-
-
+    cerr<<"Error Unnormalising Data"<<endl;
 }
 
 void processToNormaliseData()
@@ -353,13 +242,13 @@ void processToNormaliseData()
     findMinMax("output");
     normaliseData("output");
   }
-void shuffle(int* array,int size)
+void shuffle(int* array,int size,long *seedNum)
 {
         /*
          * To seed this I just need to change the value in srand() to a value and that will create a seed,
          * This can be done with a random number or given value.
          */
-        srand (time(NULL));
+        srand (time(seedNum));
         int* tmpAry;
         int tmpNum;
         int usedNum[size];
@@ -383,53 +272,56 @@ void shuffle(int* array,int size)
         delete[]tmpAry;
         //delete[]usedNum;
 }
+
 int main(int argc, char** argv)
 {
-
-	printf("Initiating training\n");
+  srand(time(NULL));
+  printf("Initiating training\n");
 	Network *net;
 	readInInputFromFile();
-	cout<<"Data read in"<< endl;
 	processToNormaliseData();
-	cout<< "Data Normalised"<<endl;
-	net = new Network(3,5,6,seed);
+	net = new Network(3,4,8,seed);
 	sequence = new int[input.size()];
-	net->set_rho(.5);
-	net->set_mSEBound(0.1);
+	for(unsigned int x=0;x<input.size();x++)
+	  sequence[x]=x;
+	net->set_rho(0.1);
+	net->set_mSEBound(0.05);
+	net->set_trainingSize(0.5);
 	net->init();
 	iterations=0;
 	//Training loop
-
+	random_shuffle(sequence,(sequence+vectSize));
 	vectSize= input.size();
-	trainingVectSize = vectSize * 0.2;
+	trainingVectSize = vectSize * net->get_trainingSize();
 	vectSize -= trainingVectSize;
+
+	//output to data file and then reload in.
 	do
 	{
           //Randomise input and reset MSE
-          shuffle(sequence,vectSize);
+          random_shuffle(sequence,(sequence+vectSize));
           net->reset_meanSqrErr();
           for(int i = 0; i < vectSize; i++)
           {
-                  //Feed this data set forward;
-                  net->update(input[sequence[i]]);
-                  //Backpropagte_error
-                  net->backpropagate_error(output[sequence[i]]);
-                  //printf("Print instead of back_prop\n");
+              //Feed this data set forward;
+              net->update(input[sequence[i]]);
+              //Backpropagte_error
+              net->backpropagate_error(output[sequence[i]]);
           }
           iterations++;
           if(iterations%5000==0)
             net->printData(iterations,vectSize);
-          if(iterations%500000==0)
-            printf("MSE:  %f\n",(net->get_meanSqrErr()/double(vectSize)));
+//          if(iterations%500000==0)
+            printf("MSE:  %f\n",(net->get_meanSqrErr()/double(iterations)));
 //          else if(iterations%5000==0)
 //            printf(".");
 
-	}while((net->get_meanSqrErr()/double(vectSize))>=net->get_mSEBound());
+	}while((net->get_meanSqrErr()/double(vectSize))>net->get_mSEBound());
 	net->printData(iterations,vectSize);
 	delete[] sequence;
 	printf("\nTraining complete\n");
 	/*
-	 * End of traning loop
+	 * End of training loop
 	 *
 	 * Now testing the network
 	 *
@@ -440,7 +332,7 @@ int main(int argc, char** argv)
 		net->update(input[(vectSize+t)]);
 	}
 	unNormaliseData("output");
-	restoreData("output");
+	//restoreData("output");
 	for(int c=0;c<trainingVectSize;c++)
 	    {
 	      printf("Desired output[%d]:\n",c);

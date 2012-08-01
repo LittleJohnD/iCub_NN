@@ -23,17 +23,19 @@
 
 class Network {
 public:
-	Network(int num_input, int num_hidden, int num_output, long seed);
+	Network(int num_input, int num_hidden, int num_output, long *seed);
 	virtual ~Network();
 	void init();
-	void update(std::vector<double> &input_vector);
-	void backpropagate_error(std::vector<double>&teachingInput_vector)/*Due to only one output(double *teaching_input)*/;
+	void update(std::vector<double> input_vector);
+	void backpropagate_error(std::vector<double> teachingInput_vector)/*Due to only one output(double *teaching_input)*/;
 	void printData(int iter,int vectSize);
 	inline void set_rho( double r){RHO = r;}
 	inline void reset_meanSqrErr( void ){ meanSqrErr = 0.0;}
 	inline double get_meanSqrErr( void ){ return meanSqrErr;}
 	inline void set_mSEBound( double b ){mSEBound=b;}
 	inline double get_mSEBound( void ){return mSEBound;}
+	inline void set_trainingSize( double t ){trainingSize=t;}
+	inline double get_trainingSize( void ){return trainingSize;}
 	inline double* get_output( void ){return outputs;}
 	inline std::string to_string (long num)
 	{
@@ -50,6 +52,7 @@ private:
 	double RHO;
 	double meanSqrErr;
 	double mSEBound;
+	double trainingSize;
 
 	double *inputs;
 	double *hidden;
