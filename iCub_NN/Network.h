@@ -23,7 +23,7 @@
 
 class Network {
 public:
-	Network(int num_input, int num_hidden, int num_output, long *seed);
+	Network(int num_input, int num_hidden, int num_output, long seed);
 	virtual ~Network();
 	void init();
 	void update(std::vector<double> input_vector);
@@ -34,8 +34,8 @@ public:
 	inline double get_meanSqrErr( void ){ return meanSqrErr;}
 	inline void set_mSEBound( double b ){mSEBound=b;}
 	inline double get_mSEBound( void ){return mSEBound;}
-	inline void set_trainingSize( double t ){trainingSize=t;}
-	inline double get_trainingSize( void ){return trainingSize;}
+	inline void set_evaluationSize( double t ){evaluationSize=t;}
+	inline double get_evaluationSize( void ){return evaluationSize;}
 	inline double* get_output( void ){return outputs;}
 	inline std::string to_string (long num)
 	{
@@ -52,7 +52,7 @@ private:
 	double RHO;
 	double meanSqrErr;
 	double mSEBound;
-	double trainingSize;
+	double evaluationSize;
 
 	double *inputs;
 	double *hidden;

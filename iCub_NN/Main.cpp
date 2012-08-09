@@ -26,15 +26,16 @@ using namespace std;
 
 vector< vector<double> > input;
 vector< vector<double> > output;
+vector< vector<double> > evaluationSet;
 vector< vector<double> > minMaxInput(11,vector<double>(2));
 vector< vector<double> > minMaxOutput(11,vector<double>(2));
 double eyeAngles[5];
 double motorAngles[4];
 int * sequence;
 int iterations;
-long *seed = 42949;
-int vectSize=0;
-int trainingVectSize=0;
+long seed = 42949;
+int vectSize;
+int evaluationVectSize;
 
 void readInInputFromFile( void )
 {
@@ -242,13 +243,30 @@ void processToNormaliseData()
     findMinMax("output");
     normaliseData("output");
   }
-void shuffle(int* array,int size,long *seedNum)
+void extractTrainningData(void)
+{
+  random_shuffle(sequence,(sequence+vectSize));
+  for(int d=(vectSize-evaluationVectSize);d<vectSize;d++)
+    {
+      vector<double> tmpVect;
+      for(unsigned int i = 0; i< (input[sequence[d]].size()) ;i++)
+        {
+          tmpVect.push_back(input[sequence[d]][i]);
+        }
+      for(unsigned int j = 0;j<output[sequence[d]].size();j++)
+        {
+          tmpVect.push_back(output[sequence[d]][j]);
+        }
+      evaluationSet.push_back(tmpVect);
+    }
+}
+
+void shuffle(int* array,int size,long seedNum)
 {
         /*
          * To seed this I just need to change the value in srand() to a value and that will create a seed,
          * This can be done with a random number or given value.
          */
-        srand (time(seedNum));
         int* tmpAry;
         int tmpNum;
         int usedNum[size];
@@ -279,42 +297,56 @@ int main(int argc, char** argv)
   printf("Initiating training\n");
 	Network *net;
 	readInInputFromFile();
-	processToNormaliseData();
-	net = new Network(3,4,8,seed);
+	//processToNormaliseData();
+	net = new Network(3,8,8,seed);
 	sequence = new int[input.size()];
 	for(unsigned int x=0;x<input.size();x++)
 	  sequence[x]=x;
-	net->set_rho(0.1);
+	net->set_rho(0.5);
 	net->set_mSEBound(0.05);
-	net->set_trainingSize(0.5);
+	net->set_evaluationSize(0.2);
 	net->init();
 	iterations=0;
 	//Training loop
-	random_shuffle(sequence,(sequence+vectSize));
 	vectSize= input.size();
-	trainingVectSize = vectSize * net->get_trainingSize();
-	vectSize -= trainingVectSize;
-
+	evaluationVectSize = vectSize * net->get_evaluationSize();
+	extractTrainningData();
+	vectSize -= evaluationVectSize;
+	int tmpCount;
 	//output to data file and then reload in.
 	do
 	{
-          //Randomise input and reset MSE
-          random_shuffle(sequence,(sequence+vectSize));
-          net->reset_meanSqrErr();
+	    //tmpCount = 0;
+	  //Randomise input and reset MSE
+	    net->reset_meanSqrErr();
+	    random_shuffle(sequence,(sequence+vectSize));
+
           for(int i = 0; i < vectSize; i++)
           {
-              //Feed this data set forward;
-              net->update(input[sequence[i]]);
-              //Backpropagte_error
-              net->backpropagate_error(output[sequence[i]]);
+            cout<<"Input: ";
+            for(unsigned int in=0;in<input[sequence[i]].size();in++)
+            {
+              cout<<input[sequence[i]][in]<<" ";
+            }
+            cout<<endl<<"Output: ";
+            for(unsigned int out=0;out<output[sequence[i]].size();out++)
+              {
+                cout<<output[sequence[i]][out]<<" ";
+              }
+            cout<<endl;
+//              Feed this data set forward;
+//              net->update(input[sequence[i]]);
+//              //Backpropagte_error
+//              net->backpropagate_error(output[sequence[i]]);
+//              //tmpCount++;
           }
-          iterations++;
-          if(iterations%5000==0)
-            net->printData(iterations,vectSize);
-//          if(iterations%500000==0)
-            printf("MSE:  %f\n",(net->get_meanSqrErr()/double(iterations)));
-//          else if(iterations%5000==0)
-//            printf(".");
+//          iterations++;
+////          if(iterations%5000==0)
+////            net->printData(iterations,vectSize);
+////          if(iterations%500000==0)
+//            printf("MSE:\t%f\n",(net->get_meanSqrErr()/double(vectSize)));
+////          else if(iterations%5000==0)
+////            printf(".");
 
 	}while((net->get_meanSqrErr()/double(vectSize))>net->get_mSEBound());
 	net->printData(iterations,vectSize);
@@ -327,13 +359,13 @@ int main(int argc, char** argv)
 	 *
 	 */
 	printf("Initiating testing...\n");
-	for(int t=0;t<trainingVectSize;t++)
+	for(int t=0;t<evaluationVectSize;t++)
 	{
 		net->update(input[(vectSize+t)]);
 	}
 	unNormaliseData("output");
 	//restoreData("output");
-	for(int c=0;c<trainingVectSize;c++)
+	for(int c=0;c<evaluationVectSize;c++)
 	    {
 	      printf("Desired output[%d]:\n",c);
 	      for(int d= 0;d<(output[vectSize+c].size());d++)

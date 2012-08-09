@@ -8,7 +8,7 @@
 #include "Network.h"
 using namespace std;
 
-Network::Network(int num_input, int num_hidden, int num_output, long *seed)
+Network::Network(int num_input, int num_hidden, int num_output, long seed)
 {
 	INPUT_NEURONS = num_input;
 	HIDDEN_NEURONS = num_hidden;
@@ -36,7 +36,7 @@ Network::Network(int num_input, int num_hidden, int num_output, long *seed)
 
 	err_out = new double [OUTPUT_NEURONS];
 	err_hid = new double [HIDDEN_NEURONS];
-	std::string outputFileName = "mseData"+seed+".csv";
+	std::string outputFileName = "mseData"+to_string(seed)+".csv";
 	dataOutput.open (outputFileName.c_str());
 	if(!dataOutput.is_open())
 	  {
