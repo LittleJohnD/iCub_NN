@@ -75,24 +75,24 @@ Network::~Network()
 void Network::init() {
 	for (int h = 0; h < HIDDEN_NEURONS; h++){
 		for (int i = 0; i < INPUT_NEURONS; i++){
-			w_h_i[h][i] = (double(rand()%100)/100 - 0.5);
+			w_h_i[h][i] = ((double(rand()%100)/100) - 0.5);
 
 		}
-		w_h_b[h] = double(rand()%100)/100 - 0.5;
+		w_h_b[h] = ((double(rand() % 100) / 100) - 0.5);
 	}
 
 	for(int out = 0; out < OUTPUT_NEURONS; out++){
 		for(int h = 0; h < HIDDEN_NEURONS; h++){
-			w_o_h[out][h] = (double(rand()%100)/100 - 0.5);
+			w_o_h[out][h] = ((double(rand() % 100) / 100) - 0.5);
 		}
-		w_o_b[out] = double(rand()%100)/100 - 0.5;
+		w_o_b[out] = ((double(rand() % 100) / 100) - 0.5);
 	}
 	dataOutput <<"RHO,"<<RHO<<"\n";
 	dataOutput <<"Hidden_Nodes,"<<HIDDEN_NEURONS<<"\n";
 	dataOutput <<"Iterations,MSE "<<"\n";
 }
 
-void Network::update(std::vector<double> input_vector)
+void Network::update(std::vector<double> &input_vector)
 {
   //calculate outputs for the hidden layer
   for(int h=0;h<HIDDEN_NEURONS;h++)
@@ -101,7 +101,7 @@ void Network::update(std::vector<double> input_vector)
     for(int i=0;i<INPUT_NEURONS;i++)
       {
         //cout<<"Input Vector:"<<input_vector[i]<<endl;
-        hidden[h]+=(w_h_i[h][i]*input_vector[i]);
+        hidden[h] += (w_h_i[h][i] * input_vector[i]);
       }
     hidden[h]=sigmoid(hidden[h]);
   }
@@ -111,34 +111,38 @@ void Network::update(std::vector<double> input_vector)
           outputs[out]=w_o_b[out];
           for(int h=0;h<HIDDEN_NEURONS;h++)
           {
-                  outputs[out]+=w_o_h[out][h]*hidden[h];
+                  outputs[out] += (w_o_h[out][h]*hidden[h]);
           }
-          outputs[out]=sigmoid(outputs[out]);
+          outputs[out] = sigmoid(outputs[out]);
           //printf("Output %d: %f\n",out,outputs[out]);
   }
 }
 
 double Network::sigmoid(double number)
 {
-	return 1.0/(1.0 + exp(-(number)));
+	return (1.0 / (1.0 + exp((number * (-1)))));
 }
 
 double Network::sigmoid_d(double number)
 {
-	return (1.0 - number) * number;
+	return ((1.0 - number) * number);
 }
 
-void Network::backpropagate_error(std::vector<double> teachingInput_vector)
+void Network::backpropagate_error(std::vector<double> &teachingInput_vector)
 {
 	int out,hid,inp;
 
 	//Compute the error for the output nodes
+	//cout<<"Err_out";
 	for(out=0;out<OUTPUT_NEURONS;out++)
 	{
 		double tmp_err = (teachingInput_vector[out]-outputs[out]);
-		err_out[out] = tmp_err*sigmoid_d(outputs[out]);
-		meanSqrErr += tmp_err *tmp_err;
+
+		err_out[out] = tmp_err * sigmoid_d(outputs[out]);
+		//cout<<err_out[out]<<" ";
+		meanSqrErr += (tmp_err * tmp_err);
 	}
+	//cout<<endl;
 	//Compute the error for the hidden nodes
 	for(hid=0;hid<HIDDEN_NEURONS;hid++)
 	{
@@ -146,9 +150,9 @@ void Network::backpropagate_error(std::vector<double> teachingInput_vector)
 		//Include error contribution for all output nodes
 		for(out=0;out<OUTPUT_NEURONS;out++)
 		{
-			err_hid[hid]+=err_out[out]*w_o_h[out][hid];
+			err_hid[hid] += (err_out[out]*w_o_h[out][hid]);
 		}
-		err_hid[hid]*=sigmoid_d(hidden[hid]);
+		err_hid[hid] *= sigmoid_d(hidden[hid]);
 	}
 
 
@@ -157,22 +161,23 @@ void Network::backpropagate_error(std::vector<double> teachingInput_vector)
 	{
 		for(hid=0;hid<HIDDEN_NEURONS;hid++)
 		{
-			//printf("before woh: %f", w_o_h[out][hid]);
-			w_o_h[out][hid]+=RHO * err_out[out]*hidden[hid];
-			//printf("after woh: %f\n", w_o_h[out][hid]);
+			printf("before woh[%d][%d]: %f ", out,hid,w_o_h[out][hid]);
+			w_o_h[out][hid] += (RHO * err_out[out]*hidden[hid]);
+			printf("\t after woh: %f\n", w_o_h[out][hid]);
 		}
+		cout<<endl;
 	}
 	//Adjust the weights from the input to the hidden layer
 	for(hid=0;hid<HIDDEN_NEURONS;hid++)
 	{
 		for(inp=0;inp<INPUT_NEURONS;inp++)
 		{
-			w_h_i[hid][inp]+=RHO * err_hid[hid]*inputs[inp];
+			w_h_i[hid][inp] += (RHO * err_hid[hid] * inputs[inp]);
 		}
 	}
 }
 
 void Network::printData(int iter,int vectSize)
 {
-  dataOutput <<iter<<","<< (meanSqrErr/double(vectSize)) <<"\n";
+  dataOutput <<iter<<","<< (meanSqrErr / double(vectSize)) <<"\n";
 }

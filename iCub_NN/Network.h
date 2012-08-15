@@ -26,12 +26,29 @@ public:
 	Network(int num_input, int num_hidden, int num_output, long seed);
 	virtual ~Network();
 	void init();
-	void update(std::vector<double> input_vector);
-	void backpropagate_error(std::vector<double> teachingInput_vector)/*Due to only one output(double *teaching_input)*/;
+	void update(std::vector<double> &input_vector);
+	void backpropagate_error(std::vector<double> &teachingInput_vector)/*Due to only one output(double *teaching_input)*/;
 	void printData(int iter,int vectSize);
 	inline void set_rho( double r){RHO = r;}
 	inline void reset_meanSqrErr( void ){ meanSqrErr = 0.0;}
 	inline double get_meanSqrErr( void ){ return meanSqrErr;}
+	inline void set_MSE( double mse){tmpMSE = mse;}
+	inline bool update_meanSqrErr( double msErr )
+	{
+	  if(msErr<=tmpMSE)
+	    {
+	      tmpMSE=msErr;
+	      return false;
+	    }
+	  else
+	    {
+	      tmpMSE=msErr;
+	      return true;
+	    }
+
+
+
+	}
 	inline void set_mSEBound( double b ){mSEBound=b;}
 	inline double get_mSEBound( void ){return mSEBound;}
 	inline void set_evaluationSize( double t ){evaluationSize=t;}
@@ -51,6 +68,7 @@ private:
 	int MAX_TESTS;
 	double RHO;
 	double meanSqrErr;
+	double tmpMSE;
 	double mSEBound;
 	double evaluationSize;
 
