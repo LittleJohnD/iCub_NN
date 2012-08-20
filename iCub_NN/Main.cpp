@@ -44,8 +44,10 @@ void readInInputFromFile( void )
   int count =0;
   vector< double >tmpInputVector;
   vector< double >tmpOutputVector;
-
-  if(jSpace.LoadFile())
+  ofstream cartData;
+  cartData.open ("cartData.dat");
+  cartData<<"#This is the data file showing the cartesian coordinates"<<endl<<"#X \t Y \t Z"<<endl;
+  if(jSpace.LoadFile() && cartData.is_open())
     {
       for(TiXmlNode* link = jSpace.FirstChildElement();link!=NULL;link = link->NextSibling ())
         {
@@ -94,10 +96,12 @@ void readInInputFromFile( void )
                         {
 
                           tmpInputVector.push_back(double(atof(attr)));
+                          cartData << double(atof(attr))<<"\t";
                           //printf("Component : %s\n",attr); // Do stuff with it
                         }
                   }
                   input.push_back(tmpInputVector);
+                  cartData<<endl;
                 }
               else
                 printf("Error reading in File\n");
@@ -107,6 +111,7 @@ void readInInputFromFile( void )
   else
     printf("Failed to load file\n");
   jSpace.Clear();
+  cartData.close();
 //  printf("Count: %d\n",count);
 //  printf("Input Vector size: %d\n", input.size());
 //  cout<<"Number of inputs: "<<input[0].size()<<" Number of outputs: "<<output[0].size()<<endl;
