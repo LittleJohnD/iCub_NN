@@ -23,7 +23,7 @@
 
 class Network {
 public:
-	Network(int num_input, int num_hidden, int num_output, long seed);
+	Network(int num_input, int num_hidden, int num_output, double seed);
 	virtual ~Network();
 	void init();
 	void update(std::vector<double> &input_vector);
@@ -31,34 +31,17 @@ public:
 	void printData(int iter,int vectSize);
 	inline void set_rho( double r){RHO = r;}
 	inline void reset_meanSqrErr( void ){ meanSqrErr = 0.0;}
-	inline double get_meanSqrErr( void ){ return meanSqrErr;}
-	inline void set_MSE( double mse){tmpMSE = mse;}
-	inline bool update_meanSqrErr( double msErr )
-	{
-	  if(msErr<=tmpMSE)
-	    {
-	      tmpMSE=msErr;
-	      return false;
-	    }
-	  else
-	    {
-	      tmpMSE=msErr;
-	      return true;
-	    }
-
-
-
-	}
+	inline double get_meanSqrErr( void ){ return (meanSqrErr);}
 	inline void set_mSEBound( double b ){mSEBound=b;}
-	inline double get_mSEBound( void ){return mSEBound;}
+	inline double get_mSEBound( void ){return (mSEBound);}
 	inline void set_evaluationSize( double t ){evaluationSize=t;}
-	inline double get_evaluationSize( void ){return evaluationSize;}
-	inline double* get_output( void ){return outputs;}
+	inline double get_evaluationSize( void ){return (evaluationSize);}
+	inline double* get_output( void ){return (outputs);}
 	inline std::string to_string (long num)
 	{
 	    std::stringstream ss;
 	    ss << num;
-	    return ss.str();
+	    return (ss.str());
 	}
 
 private:
@@ -68,7 +51,6 @@ private:
 	int MAX_TESTS;
 	double RHO;
 	double meanSqrErr;
-	double tmpMSE;
 	double mSEBound;
 	double evaluationSize;
 

@@ -8,7 +8,7 @@
 #include "Network.h"
 using namespace std;
 
-Network::Network(int num_input, int num_hidden, int num_output, long seed)
+Network::Network(int num_input, int num_hidden, int num_output, double seed)
 {
 	INPUT_NEURONS = num_input;
 	HIDDEN_NEURONS = num_hidden;
@@ -50,10 +50,6 @@ Network::~Network()
 	delete[] inputs;
 	delete[] hidden ;
 	delete[] outputs;
-	/*
-	 * There is a memory leak in the next for loop and I cannot work out
-	 * where it originates so it has been commented out.
-	 */
 	for (int i = 0; i < HIDDEN_NEURONS; i++)
 	{
 		delete[] w_h_i[i];
@@ -75,7 +71,7 @@ Network::~Network()
 void Network::init() {
 	for (int h = 0; h < HIDDEN_NEURONS; h++){
 		for (int i = 0; i < INPUT_NEURONS; i++){
-			w_h_i[h][i] = ((double(rand()%100)/100) - 0.5);
+			w_h_i[h][i] = ((double(rand() % 100) / 100) - 0.5);
 
 		}
 		w_h_b[h] = ((double(rand() % 100) / 100) - 0.5);
@@ -111,7 +107,7 @@ void Network::update(std::vector<double> &input_vector)
           outputs[out]=w_o_b[out];
           for(int h=0;h<HIDDEN_NEURONS;h++)
           {
-                  outputs[out] += (w_o_h[out][h]*hidden[h]);
+                  outputs[out] += (w_o_h[out][h] * hidden[h]);
           }
           outputs[out] = sigmoid(outputs[out]);
           //printf("Output %d: %f\n",out,outputs[out]);
@@ -131,16 +127,16 @@ double Network::sigmoid_d(double number)
 void Network::backpropagate_error(std::vector<double> &teachingInput_vector)
 {
 	int out,hid,inp;
+	double th_diff;
 
 	//Compute the error for the output nodes
 	//cout<<"Err_out";
-	for(out=0;out<OUTPUT_NEURONS;out++)
+	for(out = 0; out < OUTPUT_NEURONS; out++)
 	{
-		double tmp_err = (teachingInput_vector[out]-outputs[out]);
-
-		err_out[out] = tmp_err * sigmoid_d(outputs[out]);
+		th_diff = (teachingInput_vector[out] - outputs[out]);
+		err_out[out] = th_diff * sigmoid_d(outputs[out]);
 		//cout<<err_out[out]<<" ";
-		meanSqrErr += (tmp_err * tmp_err);
+		meanSqrErr += ((th_diff) * (th_diff));
 	}
 	//cout<<endl;
 	//Compute the error for the hidden nodes
@@ -150,7 +146,7 @@ void Network::backpropagate_error(std::vector<double> &teachingInput_vector)
 		//Include error contribution for all output nodes
 		for(out=0;out<OUTPUT_NEURONS;out++)
 		{
-			err_hid[hid] += (err_out[out]*w_o_h[out][hid]);
+			err_hid[hid] += (err_out[out] * w_o_h[out][hid]);
 		}
 		err_hid[hid] *= sigmoid_d(hidden[hid]);
 	}
@@ -161,11 +157,11 @@ void Network::backpropagate_error(std::vector<double> &teachingInput_vector)
 	{
 		for(hid=0;hid<HIDDEN_NEURONS;hid++)
 		{
-			printf("before woh[%d][%d]: %f ", out,hid,w_o_h[out][hid]);
-			w_o_h[out][hid] += (RHO * err_out[out]*hidden[hid]);
-			printf("\t after woh: %f\n", w_o_h[out][hid]);
+			//printf("before woh[%d][%d]: %f ", out,hid,w_o_h[out][hid]);
+			w_o_h[out][hid] += (RHO * err_out[out] * hidden[hid]);
+			//printf("\t after woh: %f\n", w_o_h[out][hid]);
 		}
-		cout<<endl;
+		//cout<<endl;
 	}
 	//Adjust the weights from the input to the hidden layer
 	for(hid=0;hid<HIDDEN_NEURONS;hid++)

@@ -27,13 +27,11 @@ using namespace std;
 vector< vector<double> > input;
 vector< vector<double> > output;
 vector< vector<double> > evaluationSet;
-vector< vector<double> > minMaxInput(3,vector<double>(2));
-vector< vector<double> > minMaxOutput(8,vector<double>(2));
-double eyeAngles[5];
-double motorAngles[4];
+vector< vector<double> > minMaxInput(3 , vector < double >(2));
+vector< vector<double> > minMaxOutput(8 , vector < double >(2));
 int * sequence;
 int iterations;
-long seed = 42949;
+double seed = 42949;
 int vectSize;
 int evaluationVectSize;
 
@@ -44,8 +42,8 @@ void readInInputFromFile( void )
   TiXmlElement* elem;
   const char* attr;
   int count =0;
-  vector<double>tmpInputVector;
-  vector<double>tmpOutputVector;
+  vector< double >tmpInputVector;
+  vector< double >tmpOutputVector;
 
   if(jSpace.LoadFile())
     {
@@ -59,6 +57,7 @@ void readInInputFromFile( void )
             for(elem = link->FirstChildElement(); elem != NULL; elem = elem->NextSiblingElement())
             {
               elemName = elem->Value();
+
               if(elemName == "InputNode")
                 {
                   tmpOutputVector.clear();
@@ -71,7 +70,6 @@ void readInInputFromFile( void )
                           //printf("Component : %s\n",attr); // Do stuff with it
                         }
                     }
-
                 }
               else if(elemName == "OutputNode")
                 {
@@ -81,10 +79,8 @@ void readInInputFromFile( void )
                       if(attr != NULL)
                         {
                           tmpOutputVector.push_back(atof(attr));
-                         // Do stuff with it
                         }
                     }
-
                   output.push_back(tmpOutputVector);
                 }
               else if(elemName == "LinkAttr")
@@ -107,7 +103,6 @@ void readInInputFromFile( void )
                 printf("Error reading in File\n");
             }
         }
-
     }
   else
     printf("Failed to load file\n");
@@ -125,6 +120,10 @@ void readInInputFromFile( void )
 //      printf("Output Vector[%d]:\n",n);
 //      for(unsigned int o=0;o<output[n].size();o++)
 //        printf("\t %d: %f\t",o,output[n][o]);
+//      printf("\n");
+//      printf("Data Vector[%d]:\n",n);
+//      for(unsigned int o=0;o<data[n].size();o++)
+//        printf("\t %d: %f\t",o,data[n][o]);
 //      printf("\n");
 //    }
 }
@@ -146,9 +145,21 @@ void findMinMax(string io)
           if(i==0)
             {
               for(unsigned int k=0;k<(input[i].size());k++)
-                minMaxInput[k][0]=minMaxInput[k][1];
+                {
+                  double tmpInt=0.0;
+                  tmpInt=minMaxInput[k][0];
+                  minMaxInput[k][0]=minMaxInput[k][1];
+                  minMaxInput[k][1]=tmpInt;
+                }
             }
         }
+//      for(unsigned int n =0;n<minMaxInput.size();n++)
+//        {
+//          printf("minMaxInput\n");
+//          for(unsigned int i=0;i<minMaxInput[n].size();i++)
+//            cout<<minMaxInput[n][i]<<"\t";
+//          printf("\n");
+//        }
     }
   else if(io == "output")
     {
@@ -164,9 +175,21 @@ void findMinMax(string io)
           if(i==0)
             {
               for(unsigned int k=0;k<(output[i].size());k++)
-                minMaxOutput[k][0]=minMaxOutput[k][1];
+                {
+                  double tmpInt =0.0;
+                  tmpInt=minMaxOutput[k][0];
+                  minMaxOutput[k][0]=minMaxOutput[k][1];
+                  minMaxOutput[k][1]=tmpInt;
+                }
             }
         }
+//      for(unsigned int n =0;n<minMaxOutput.size();n++)
+//        {
+//          printf("minMaxOutput\n");
+//          for(unsigned int i=0;i<minMaxOutput[n].size();i++)
+//            cout<<minMaxOutput[n][i]<<"\t";
+//          printf("\n");
+//        }
     }
   else
     cerr<<"Error finding minMax"<<endl;
@@ -186,6 +209,13 @@ void normaliseData(string io)
                 input[i][j]=0;
             }
         }
+//      for(unsigned int n =0;n<input.size();n++)
+//        {
+//          printf("Normalised Input Data\n");
+//          for(unsigned int i=0;i<input[n].size();i++)
+//            cout<<input[n][i]<<"\t";
+//          printf("\n");
+//        }
     }
   else if(io == "output")
     {
@@ -199,8 +229,15 @@ void normaliseData(string io)
                 output[i][j]=0;
             }
         }
+//      for(unsigned int n =0;n<input.size();n++)
+//        {
+//          printf("Normalised Output Data\n");
+//          for(unsigned int i=0;i<output[n].size();i++)
+//            cout<<output[n][i]<<"\t";
+//          printf("\n");
+//        }
     }
-  else
+   else
     cerr<<"Error Normalising Data"<<endl;
 
 }
@@ -252,7 +289,7 @@ void extractTrainningData(void)
   random_shuffle(sequence,(sequence+vectSize));
   for(int d=(vectSize-evaluationVectSize);d<vectSize;d++)
     {
-      vector<double> tmpVect;
+      vector< double > tmpVect;
       for(unsigned int i = 0; i< (input[sequence[d]].size()) ;i++)
         {
           tmpVect.push_back(input[sequence[d]][i]);
@@ -261,7 +298,6 @@ void extractTrainningData(void)
         {
           tmpVect.push_back(output[sequence[d]][j]);
         }
-      evaluationSet.push_back(tmpVect);
     }
 }
 
@@ -299,80 +335,79 @@ int main(int argc, char** argv)
 {
   srand(time(NULL));
   printf("Initiating training\n");
-	Network *net;
-	readInInputFromFile();
-	processToNormaliseData();
-	net = new Network(3,8,8,seed);
-	sequence = new int[input.size()];
-	for(unsigned int x=0;x<input.size();x++)
-	  sequence[x]=x;
-	net->set_rho(0.1);
-	net->set_mSEBound(0.05);
-	net->set_evaluationSize(0.5);
-	net->init();
-	iterations=0;
-	//Training loop
-	vectSize= input.size();
-	evaluationVectSize = vectSize * net->get_evaluationSize();
-	extractTrainningData();
-	vectSize -= evaluationVectSize;
-	net->set_MSE(0.05);
-	//output to data file and then reload in.
-	do
-	{
-	  //Randomise input and reset MSE
-	    net->reset_meanSqrErr();
-	    random_shuffle(sequence,(sequence + vectSize));
-//	    for(unsigned int x=0;x<vectSize;x++)
-//	      cout<<sequence[x]<<" ";
-//	    cout<<endl;
-	    //cout<<"tmp_err: ";
-          for(int i = 0; i < vectSize; i++)
-          {
-              //Feed this data set forward;
-              net->update(input[sequence[i]]);
-              //Backpropagte_error
-              net->backpropagate_error(output[sequence[i]]);
-              //tmpCount++;
-          }
-         // cout<<endl;
-          //iterations++;
-//          if(iterations%5000==0)
-//            net->printData(iterations,vectSize);
-//          if(iterations%500000==0)
-            printf("MSE:\t%f\n",(net->get_meanSqrErr() / double(vectSize)));
-            //net->update_meanSqrErr(net->get_meanSqrErr());
-//          else if(iterations%5000==0)
-//            printf(".");
+  Network *net;
+  readInInputFromFile();
+  cout<<"File read in"<<endl;
+  processToNormaliseData();
+  cout<<"Normalised"<<endl;
+  net = new Network(3,8,8,seed);
+  sequence = new int[input.size()];
+  for(unsigned int x=0;x<input.size();x++)
+    sequence[x]=x;
+  net->set_rho(0.5);
+  net->set_mSEBound(0.01);
+  net->set_evaluationSize(0.5);
+  net->init();
+  iterations=0;
+  //Training loop
+  vectSize= input.size();
+  evaluationVectSize = vectSize * net->get_evaluationSize();
+  extractTrainningData();
+  vectSize -= evaluationVectSize;
+  do
+  {
+      //Randomise input and reset MSE
+      net->reset_meanSqrErr();
+      random_shuffle(sequence,(sequence + vectSize));
+  //	    for(unsigned int x=0;x<vectSize;x++)
+  //	      cout<<sequence[x]<<" ";
+  //	    cout<<endl;
+      //cout<<"tmp_err: ";
+    for(int i = 0; i < vectSize; i++)
+    {
+        //Feed this data set forward;
+        net->update(input[sequence[i]]);
+        //Backpropagte_error
+        net->backpropagate_error(output[sequence[i]]);
+    }
+   // cout<<endl;
+    //iterations++;
+  //          if(iterations%5000==0)
+  //            net->printData(iterations,vectSize);
+  //          if(iterations%500000==0)
+    printf("MSE:\t%f\n",(net->get_meanSqrErr() / ((double) vectSize)));
+      //net->update_meanSqrErr(net->get_meanSqrErr());
+  //          else if(iterations%5000==0)
+  //            printf(".");
 
-	}while((net->get_meanSqrErr() / double(vectSize)) > net->get_mSEBound());//while(net->update_meanSqrErr(net->get_meanSqrErr())); //
-	net->printData(iterations,vectSize);
-	delete[] sequence;
-	printf("\nTraining complete\n");
-	/*
-	 * End of training loop
-	 *
-	 * Now testing the network
-	 *
-	 */
-	printf("Initiating testing...\n");
-	for(int t=0;t<evaluationVectSize;t++)
-	{
-		net->update(input[(vectSize+t)]);
-	}
-	unNormaliseData("output");
-	//restoreData("output");
-	for(int c=0;c<evaluationVectSize;c++)
-	    {
-	      printf("Desired output[%d]:\n",c);
-	      for(int d= 0;d<(output[vectSize+c].size());d++)
-                {
-                  printf("\t %f ", output[vectSize+c][d]);
-                  printf("\t\t Output: %f\n",((net->get_output()[d] *  (minMaxOutput[d][1] - minMaxOutput[d][0])) + minMaxOutput[d][0]));
-                }
-              printf("\n\n\n");
-	    }
-	printf("Testing complete\n");
-	delete net;
-	return 0;
+  }while((net->get_meanSqrErr() / ((double)vectSize)) > net->get_mSEBound());//while(net->update_meanSqrErr(net->get_meanSqrErr())); //
+  net->printData(iterations,vectSize);
+  delete[] sequence;
+  printf("\nTraining complete\n");
+  /*
+   * End of training loop
+   *
+   * Now testing the network
+   *
+   */
+  printf("Initiating testing...\n");
+  for(int t=0;t<evaluationVectSize;t++)
+  {
+          net->update(input[(vectSize+t)]);
+  }
+  unNormaliseData("output");
+  //restoreData("output");
+  for(int c=0;c<evaluationVectSize;c++)
+      {
+        printf("Desired output[%d]:\n",c);
+        for(int d= 0;d<(output[vectSize+c].size());d++)
+          {
+  //                  printf("\t %f ", output[vectSize+c][d]);
+  //                  printf("\t\t Output: %f\n",((net->get_output()[d] *  (minMaxOutput[d][1] - minMaxOutput[d][0])) + minMaxOutput[d][0]));
+          }
+        printf("\n\n\n");
+      }
+  printf("Testing complete\n");
+  delete net;
+  return (0);
 }
