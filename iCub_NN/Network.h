@@ -37,6 +37,8 @@ public:
 	inline void set_evaluationSize( double t ){evaluationSize=t;}
 	inline double get_evaluationSize( void ){return (evaluationSize);}
 	inline double* get_output( void ){return (outputs);}
+	inline void set_iterBound( int iB ){iterBound=iB;}
+        inline int get_iterBound( void ){return (iterBound);}
 	inline std::string to_string (long num)
 	{
 	    std::stringstream ss;
@@ -53,6 +55,7 @@ private:
 	double meanSqrErr;
 	double mSEBound;
 	double evaluationSize;
+	int iterBound;
 
 	double *inputs;
 	double *hidden;

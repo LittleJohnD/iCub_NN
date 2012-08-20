@@ -26,7 +26,8 @@ using namespace std;
 
 vector< vector<double> > input;
 vector< vector<double> > output;
-vector< vector<double> > evaluationSet;
+vector< vector<double> > evaluationInputSet;
+vector< vector<double> > evaluationOutputSet;
 vector< vector<double> > minMaxInput(3 , vector < double >(2));
 vector< vector<double> > minMaxOutput(8 , vector < double >(2));
 int * sequence;
@@ -277,6 +278,20 @@ void unNormaliseData(string io)
                 output[i][j]=minMaxOutput[j][1];
             }
         }
+      for(unsigned int i= 0;i<evaluationOutputSet.size();i++)
+        {
+          for(unsigned int j = 0;j<evaluationOutputSet[i].size();j++)
+            {
+              if(minMaxOutput[j][0]!=minMaxOutput[j][1])
+                {
+                  //cout<<"Norm:\t"<<output[i][j];
+                  evaluationOutputSet[i][j]=((evaluationOutputSet[i][j] * (minMaxOutput[j][1] - minMaxOutput[j][0])) + minMaxOutput[j][0]);
+                  //cout<<"\t Unnorm:\t"<<output[i][j]<<endl;
+                }
+              else
+                evaluationOutputSet[i][j]=minMaxOutput[j][1];
+            }
+        }
     }
   else
     cerr<<"Error Unnormalising Data"<<endl;
@@ -299,10 +314,14 @@ void extractTrainningData(void)
         {
           tmpVect.push_back(input[sequence[d]][i]);
         }
+      evaluationInputSet.push_back(tmpVect);
+      tmpVect.clear();
       for(unsigned int j = 0;j<output[sequence[d]].size();j++)
         {
           tmpVect.push_back(output[sequence[d]][j]);
         }
+      evaluationOutputSet.push_back(tmpVect);
+      tmpVect.clear();
     }
 }
 
@@ -350,8 +369,9 @@ int main(int argc, char** argv)
       for(unsigned int x=0;x<input.size();x++)
         sequence[x]=x;
       net->set_rho(0.5);
-      net->set_mSEBound(0.01);
+      net->set_mSEBound(0.001);
       net->set_evaluationSize(0.5);
+      net->set_iterBound(1000000);
       net->init();
       iterations=0;
       //Training loop
@@ -365,10 +385,6 @@ int main(int argc, char** argv)
           //Randomise input and reset MSE
           net->reset_meanSqrErr();
           random_shuffle(sequence,(sequence + vectSize));
-      //	    for(unsigned int x=0;x<vectSize;x++)
-      //	      cout<<sequence[x]<<" ";
-      //	    cout<<endl;
-          //cout<<"tmp_err: ";
         for(int i = 0; i < vectSize; i++)
         {
             //Feed this data set forward;
@@ -378,7 +394,7 @@ int main(int argc, char** argv)
         }
        // cout<<endl;
         iterations++;
-        if(iterations%5000==0)
+        if(iterations%50000==0)
           net->printData(iterations,vectSize);
         if(iterations%50000==0)
           printf("MSE:\t%f \t Iternations: \t %d \n",(net->get_meanSqrErr() / ((double) vectSize)),iterations);
@@ -386,13 +402,13 @@ int main(int argc, char** argv)
       //          else if(iterations%5000==0)
       //            printf(".");
 
-      }while((net->get_meanSqrErr() / ((double)vectSize)) > net->get_mSEBound()&&iterations<1000000);//while(net->update_meanSqrErr(net->get_meanSqrErr())); //
-      if(iterations==1000000)
+      }while((net->get_meanSqrErr() / ((double)vectSize)) > net->get_mSEBound()&&iterations<net->get_iterBound());//while(net->update_meanSqrErr(net->get_meanSqrErr())); //
+      if(iterations==net->get_iterBound())
         cout<<"Too many iterterations, reintailisng"<<endl;
     }while((net->get_meanSqrErr() / ((double)vectSize)) > net->get_mSEBound());
   net->printData(iterations,vectSize);
   delete[] sequence;
-  printf("\nTraining complete\n");
+  printf("\nTraining complete\nAfter %d iterations \n",iterations);
   /*
    * End of training loop
    *
@@ -402,17 +418,18 @@ int main(int argc, char** argv)
   printf("Initiating testing...\n");
   for(int t=0;t<evaluationVectSize;t++)
   {
-          net->update(input[(vectSize+t)]);
+          net->update(evaluationInputSet[t]);
   }
   unNormaliseData("output");
   //restoreData("output");
   for(int c=0;c<evaluationVectSize;c++)
       {
         printf("Desired output[%d]:\n",c);
-        for(int d= 0;d<(output[vectSize+c].size());d++)
+
+        for(int d= 0;d<(evaluationOutputSet[c].size());d++)
           {
-  //                  printf("\t %f ", output[vectSize+c][d]);
-  //                  printf("\t\t Output: %f\n",((net->get_output()[d] *  (minMaxOutput[d][1] - minMaxOutput[d][0])) + minMaxOutput[d][0]));
+                    printf("\t %f ", evaluationOutputSet[c][d]);
+                    printf("\t\t Output: %f\n",evaluationOutputSet[c][d]);// *  (minMaxOutput[d][1] - minMaxOutput[d][0])) + minMaxOutput[d][0]));
           }
         printf("\n\n\n");
       }
