@@ -394,7 +394,7 @@ int main(int argc, char** argv)
         }
        // cout<<endl;
         iterations++;
-        if(iterations%50000==0)
+        if(iterations%10000==0)
           net->printData(iterations,vectSize);
         if(iterations%50000==0)
           printf("MSE:\t%f \t Iternations: \t %d \n",(net->get_meanSqrErr() / ((double) vectSize)),iterations);
