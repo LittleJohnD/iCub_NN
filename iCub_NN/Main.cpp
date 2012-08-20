@@ -98,7 +98,6 @@ void readInInputFromFile( void )
 
                           tmpInputVector.push_back(double(atof(attr)));
                           cartData << double(atof(attr))<<"\t";
-                          //printf("Component : %s\n",attr); // Do stuff with it
                         }
                   }
                   input.push_back(tmpInputVector);
@@ -126,10 +125,6 @@ void readInInputFromFile( void )
 //      printf("Output Vector[%d]:\n",n);
 //      for(unsigned int o=0;o<output[n].size();o++)
 //        printf("\t %d: %f\t",o,output[n][o]);
-//      printf("\n");
-//      printf("Data Vector[%d]:\n",n);
-//      for(unsigned int o=0;o<data[n].size();o++)
-//        printf("\t %d: %f\t",o,data[n][o]);
 //      printf("\n");
 //    }
 }
@@ -159,14 +154,7 @@ void findMinMax(string io)
                 }
             }
         }
-//      for(unsigned int n =0;n<minMaxInput.size();n++)
-//        {
-//          printf("minMaxInput\n");
-//          for(unsigned int i=0;i<minMaxInput[n].size();i++)
-//            cout<<minMaxInput[n][i]<<"\t";
-//          printf("\n");
-//        }
-    }
+     }
   else if(io == "output")
     {
       for(unsigned int i=0;i<output.size();i++)
@@ -189,13 +177,6 @@ void findMinMax(string io)
                 }
             }
         }
-//      for(unsigned int n =0;n<minMaxOutput.size();n++)
-//        {
-//          printf("minMaxOutput\n");
-//          for(unsigned int i=0;i<minMaxOutput[n].size();i++)
-//            cout<<minMaxOutput[n][i]<<"\t";
-//          printf("\n");
-//        }
     }
   else
     cerr<<"Error finding minMax"<<endl;
@@ -215,13 +196,6 @@ void normaliseData(string io)
                 input[i][j]=0;
             }
         }
-//      for(unsigned int n =0;n<input.size();n++)
-//        {
-//          printf("Normalised Input Data\n");
-//          for(unsigned int i=0;i<input[n].size();i++)
-//            cout<<input[n][i]<<"\t";
-//          printf("\n");
-//        }
     }
   else if(io == "output")
     {
@@ -235,13 +209,6 @@ void normaliseData(string io)
                 output[i][j]=0;
             }
         }
-//      for(unsigned int n =0;n<input.size();n++)
-//        {
-//          printf("Normalised Output Data\n");
-//          for(unsigned int i=0;i<output[n].size();i++)
-//            cout<<output[n][i]<<"\t";
-//          printf("\n");
-//        }
     }
    else
     cerr<<"Error Normalising Data"<<endl;
@@ -270,9 +237,7 @@ void unNormaliseData(string io)
             {
               if(minMaxOutput[j][0]!=minMaxOutput[j][1])
                 {
-                  //cout<<"Norm:\t"<<output[i][j];
                   output[i][j]=((output[i][j] * (minMaxOutput[j][1] - minMaxOutput[j][0])) + minMaxOutput[j][0]);
-                  //cout<<"\t Unnorm:\t"<<output[i][j]<<endl;
                 }
               else
                 output[i][j]=minMaxOutput[j][1];
@@ -284,9 +249,7 @@ void unNormaliseData(string io)
             {
               if(minMaxOutput[j][0]!=minMaxOutput[j][1])
                 {
-                  //cout<<"Norm:\t"<<output[i][j];
                   evaluationOutputSet[i][j]=((evaluationOutputSet[i][j] * (minMaxOutput[j][1] - minMaxOutput[j][0])) + minMaxOutput[j][0]);
-                  //cout<<"\t Unnorm:\t"<<output[i][j]<<endl;
                 }
               else
                 evaluationOutputSet[i][j]=minMaxOutput[j][1];
@@ -309,104 +272,124 @@ void extractTrainningData(void)
   random_shuffle(sequence,(sequence+vectSize));
   for(int d=(vectSize-evaluationVectSize);d<vectSize;d++)
     {
-      vector< double > tmpVect;
+      vector< double > tmpEvalVect;
       for(unsigned int i = 0; i< (input[sequence[d]].size()) ;i++)
         {
-          tmpVect.push_back(input[sequence[d]][i]);
+          tmpEvalVect.push_back(input[sequence[d]][i]);
         }
-      evaluationInputSet.push_back(tmpVect);
-      tmpVect.clear();
+      evaluationInputSet.push_back(tmpEvalVect);
+      tmpEvalVect.clear();
       for(unsigned int j = 0;j<output[sequence[d]].size();j++)
         {
-          tmpVect.push_back(output[sequence[d]][j]);
+          tmpEvalVect.push_back(output[sequence[d]][j]);
         }
-      evaluationOutputSet.push_back(tmpVect);
-      tmpVect.clear();
+      evaluationOutputSet.push_back(tmpEvalVect);
+      tmpEvalVect.clear();
     }
-}
-
-void shuffle(int* array,int size,long seedNum)
-{
-        /*
-         * To seed this I just need to change the value in srand() to a value and that will create a seed,
-         * This can be done with a random number or given value.
-         */
-        int* tmpAry;
-        int tmpNum;
-        int usedNum[size];
-        tmpAry = new int[size];
-        for(int i=0;i<size;i++)
-        {
-                tmpNum = rand() % size;
-                for(int j=0;j<i;j++)
-                {
-                        if(tmpNum==usedNum[j])
-                          break;
-                }
-                usedNum[i] = tmpNum;
-        }
-        for(int x=0;x<size;x++)
-        {
-//            sequence[x]=x;
-            sequence[x]=usedNum[x];
-                //printf("Sequence: %d\n",sequence[x]);
-        }
-        delete[]tmpAry;
-        //delete[]usedNum;
 }
 
 int main(int argc, char** argv)
 {
   srand(time(NULL));
   printf("Initiating training\n");
-  Network *net;
+  /*
+   * Pre-process the data by reading it in and normalising it.
+   * Then initialising the networks and sequence array.
+   */
+  Network *motorNet;
+  Network *eyeNet;
+
+
   readInInputFromFile();
   processToNormaliseData();
+  sequence = new int[input.size()];
+  for(unsigned int x=0;x<input.size();x++)
+    sequence[x]=x;
+
+  cout<<"Starting eye network"<<endl;
+  do
+  {
+    eyeNet = new Network(3,4,4,seed,"eye");
+    eyeNet->set_rho(0.1);
+    eyeNet->set_mSEBound(0.001);
+    eyeNet->set_evaluationSize(0.5);
+    eyeNet->set_iterBound(1000000);
+    eyeNet->init();
+    vectSize= input.size();
+    evaluationVectSize = vectSize * eyeNet->get_evaluationSize();
+    extractTrainningData();
+    vectSize -= evaluationVectSize;
+    iterations = 0;
+    do
+    {
+      /*
+       * This loop is identical to the one above except it feeds a different instance of a Network object
+       */
+      eyeNet->reset_meanSqrErr();
+      random_shuffle(sequence,(sequence + vectSize));
+      for(int i = 0; i < vectSize; i++)
+      {
+        eyeNet->update(input[sequence[i]]);
+        eyeNet->backpropagate_error(output[sequence[i]]);
+      }
+      iterations++;
+      if(iterations%5000==0)
+        eyeNet->printData(iterations,vectSize);
+      if(iterations%50000==0)
+        printf("MSE:\t%f\t Iterations: %d\n",(eyeNet->get_meanSqrErr() / double(vectSize)),iterations);
+    }while((eyeNet->get_meanSqrErr() / double(vectSize)) > eyeNet->get_mSEBound()&&iterations < eyeNet->get_iterBound());
+    if(iterations==eyeNet->get_iterBound())
+      cout<<"Too many iterations, re-initialling"<<endl;
+  }while((eyeNet->get_meanSqrErr() / ((double)vectSize)) > eyeNet->get_mSEBound());
+    eyeNet->printData(iterations,vectSize);
+    cout<<"Eye network finished"<<endl;
+    printf("\nTraining complete\nAfter %d iterations \n",iterations);
+  cout<<"Starting motor network"<<endl;
   do
     {
-      net = new Network(3,8,8,seed);
-      sequence = new int[input.size()];
-      for(unsigned int x=0;x<input.size();x++)
-        sequence[x]=x;
-      net->set_rho(0.5);
-      net->set_mSEBound(0.001);
-      net->set_evaluationSize(0.5);
-      net->set_iterBound(1000000);
-      net->init();
-      iterations=0;
-      //Training loop
+      motorNet = new Network(3,4,4,seed,"motor");
+      motorNet->set_rho(0.1);
+      motorNet->set_mSEBound(0.001);
+      motorNet->set_evaluationSize(0.5);
+      motorNet->set_iterBound(1000000);
+      motorNet->init();
       vectSize= input.size();
-      evaluationVectSize = vectSize * net->get_evaluationSize();
+      evaluationVectSize = vectSize * motorNet->get_evaluationSize();
       extractTrainningData();
       vectSize -= evaluationVectSize;
-
+      iterations=0;
+      //Training loop
       do
       {
-          //Randomise input and reset MSE
-          net->reset_meanSqrErr();
-          random_shuffle(sequence,(sequence + vectSize));
+        /*
+         * Randomise input by putting it through random shuffle and reset MSE to 0.0
+         */
+        motorNet->reset_meanSqrErr();
+        random_shuffle(sequence,(sequence + vectSize));
         for(int i = 0; i < vectSize; i++)
         {
-            //Feed this data set forward;
-            net->update(input[sequence[i]]);
-            //Backpropagte_error
-            net->backpropagate_error(output[sequence[i]]);
+            /*
+             * Feed this data set forward into the motorNet
+             */
+            motorNet->update(input[sequence[i]]);
+            /*
+             * Backpropagte error
+             */
+            motorNet->backpropagate_error(output[sequence[i]]);
         }
-       // cout<<endl;
         iterations++;
-        if(iterations%10000==0)
-          net->printData(iterations,vectSize);
+        if(iterations%5000==0)
+          motorNet->printData(iterations,vectSize);
         if(iterations%50000==0)
-          printf("MSE:\t%f \t Iternations: \t %d \n",(net->get_meanSqrErr() / ((double) vectSize)),iterations);
-          //net->update_meanSqrErr(net->get_meanSqrErr());
-      //          else if(iterations%5000==0)
-      //            printf(".");
+          printf("MSE:\t%f\t Iterations: %d\n",(motorNet->get_meanSqrErr() / double(vectSize)),iterations);
+      }while((motorNet->get_meanSqrErr() / ((double)vectSize)) > motorNet->get_mSEBound()&& iterations < motorNet->get_iterBound());
+      if(iterations==motorNet->get_iterBound())
+        cout<<"Too many iterations, re-initialling"<<endl;
+    }while((motorNet->get_meanSqrErr() / ((double)vectSize)) > motorNet->get_mSEBound());
+    motorNet->printData(iterations,vectSize);
+    cout<<"Motor network finished"<<endl;
 
-      }while((net->get_meanSqrErr() / ((double)vectSize)) > net->get_mSEBound()&&iterations<net->get_iterBound());//while(net->update_meanSqrErr(net->get_meanSqrErr())); //
-      if(iterations==net->get_iterBound())
-        cout<<"Too many iterterations, reintailisng"<<endl;
-    }while((net->get_meanSqrErr() / ((double)vectSize)) > net->get_mSEBound());
-  net->printData(iterations,vectSize);
+
   delete[] sequence;
   printf("\nTraining complete\nAfter %d iterations \n",iterations);
   /*
@@ -415,25 +398,26 @@ int main(int argc, char** argv)
    * Now testing the network
    *
    */
-  printf("Initiating testing...\n");
-  for(int t=0;t<evaluationVectSize;t++)
-  {
-          net->update(evaluationInputSet[t]);
-  }
-  unNormaliseData("output");
-  //restoreData("output");
-  for(int c=0;c<evaluationVectSize;c++)
-      {
-        printf("Desired output[%d]:\n",c);
-
-        for(int d= 0;d<(evaluationOutputSet[c].size());d++)
-          {
-                    printf("\t %f ", evaluationOutputSet[c][d]);
-                    printf("\t\t Output: %f\n",evaluationOutputSet[c][d]);// *  (minMaxOutput[d][1] - minMaxOutput[d][0])) + minMaxOutput[d][0]));
-          }
-        printf("\n\n\n");
-      }
-  printf("Testing complete\n");
-  delete net;
+//  printf("Initiating testing...\n");
+//  for(int t=0;t<evaluationVectSize;t++)
+//  {
+//          net->update(evaluationInputSet[t]);
+//  }
+//  unNormaliseData("output");
+//  //restoreData("output");
+//  for(int c=0;c<evaluationVectSize;c++)
+//      {
+//        printf("Desired output[%d]:\n",c);
+//
+//        for(int d= 0;d<(evaluationOutputSet[c].size());d++)
+//          {
+//                    printf("\t %f ", evaluationOutputSet[c][d]);
+//                    printf("\t\t Output: %f\n",evaluationOutputSet[c][d]);// *  (minMaxOutput[d][1] - minMaxOutput[d][0])) + minMaxOutput[d][0]));
+//          }
+//        printf("\n\n\n");
+//      }
+//  printf("Testing complete\n");
+  delete motorNet;
+  delete eyeNet;
   return (0);
 }

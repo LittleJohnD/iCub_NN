@@ -8,7 +8,7 @@
 #include "Network.h"
 using namespace std;
 
-Network::Network(int num_input, int num_hidden, int num_output, double seed)
+Network::Network(int num_input, int num_hidden, int num_output, double seed,std::string type)
 {
 	INPUT_NEURONS = num_input;
 	HIDDEN_NEURONS = num_hidden;
@@ -43,6 +43,10 @@ Network::Network(int num_input, int num_hidden, int num_output, double seed)
 	    printf("Error: Cannot open input file.\n");
 	    exit(1);
 	  }
+	if(type=="motor")
+          typeNum = 4;
+	else
+	  typeNum = 0;
 }
 
 Network::~Network()
@@ -97,7 +101,7 @@ void Network::update(std::vector<double> &input_vector)
     for(int i=0;i<INPUT_NEURONS;i++)
       {
         //cout<<"Input Vector:"<<input_vector[i]<<endl;
-        hidden[h] += (w_h_i[h][i] * input_vector[i]);
+        hidden[h] += (w_h_i[h][i] * input_vector[i + typeNum]);
       }
     hidden[h]=sigmoid(hidden[h]);
   }
@@ -110,7 +114,6 @@ void Network::update(std::vector<double> &input_vector)
                   outputs[out] += (w_o_h[out][h] * hidden[h]);
           }
           outputs[out] = sigmoid(outputs[out]);
-          //printf("Output %d: %f\n",out,outputs[out]);
   }
 }
 
@@ -128,17 +131,13 @@ void Network::backpropagate_error(std::vector<double> &teachingInput_vector)
 {
 	int out,hid,inp;
 	double th_diff;
-
 	//Compute the error for the output nodes
-	//cout<<"Err_out";
 	for(out = 0; out < OUTPUT_NEURONS; out++)
 	{
-		th_diff = (teachingInput_vector[out] - outputs[out]);
+		th_diff = (teachingInput_vector[out + typeNum] - outputs[out]);
 		err_out[out] = th_diff * sigmoid_d(outputs[out]);
-		//cout<<err_out[out]<<" ";
 		meanSqrErr += ((th_diff) * (th_diff));
 	}
-	//cout<<endl;
 	//Compute the error for the hidden nodes
 	for(hid=0;hid<HIDDEN_NEURONS;hid++)
 	{
@@ -157,11 +156,8 @@ void Network::backpropagate_error(std::vector<double> &teachingInput_vector)
 	{
 		for(hid=0;hid<HIDDEN_NEURONS;hid++)
 		{
-			//printf("before woh[%d][%d]: %f ", out,hid,w_o_h[out][hid]);
 			w_o_h[out][hid] += (RHO * err_out[out] * hidden[hid]);
-			//printf("\t after woh: %f\n", w_o_h[out][hid]);
 		}
-		//cout<<endl;
 	}
 	//Adjust the weights from the input to the hidden layer
 	for(hid=0;hid<HIDDEN_NEURONS;hid++)

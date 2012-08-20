@@ -23,7 +23,7 @@
 
 class Network {
 public:
-	Network(int num_input, int num_hidden, int num_output, double seed);
+	Network(int num_input, int num_hidden, int num_output, double seed,std::string type);
 	virtual ~Network();
 	void init();
 	void update(std::vector<double> &input_vector);
@@ -56,6 +56,7 @@ private:
 	double mSEBound;
 	double evaluationSize;
 	int iterBound;
+	int typeNum;
 
 	double *inputs;
 	double *hidden;
