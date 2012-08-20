@@ -342,50 +342,54 @@ int main(int argc, char** argv)
   printf("Initiating training\n");
   Network *net;
   readInInputFromFile();
-  cout<<"File read in"<<endl;
   processToNormaliseData();
-  cout<<"Normalised"<<endl;
-  net = new Network(3,8,8,seed);
-  sequence = new int[input.size()];
-  for(unsigned int x=0;x<input.size();x++)
-    sequence[x]=x;
-  net->set_rho(0.5);
-  net->set_mSEBound(0.01);
-  net->set_evaluationSize(0.5);
-  net->init();
-  iterations=0;
-  //Training loop
-  vectSize= input.size();
-  evaluationVectSize = vectSize * net->get_evaluationSize();
-  extractTrainningData();
-  vectSize -= evaluationVectSize;
   do
-  {
-      //Randomise input and reset MSE
-      net->reset_meanSqrErr();
-      random_shuffle(sequence,(sequence + vectSize));
-  //	    for(unsigned int x=0;x<vectSize;x++)
-  //	      cout<<sequence[x]<<" ";
-  //	    cout<<endl;
-      //cout<<"tmp_err: ";
-    for(int i = 0; i < vectSize; i++)
     {
-        //Feed this data set forward;
-        net->update(input[sequence[i]]);
-        //Backpropagte_error
-        net->backpropagate_error(output[sequence[i]]);
-    }
-   // cout<<endl;
-    //iterations++;
-  //          if(iterations%5000==0)
-  //            net->printData(iterations,vectSize);
-  //          if(iterations%500000==0)
-    printf("MSE:\t%f\n",(net->get_meanSqrErr() / ((double) vectSize)));
-      //net->update_meanSqrErr(net->get_meanSqrErr());
-  //          else if(iterations%5000==0)
-  //            printf(".");
+      net = new Network(3,8,8,seed);
+      sequence = new int[input.size()];
+      for(unsigned int x=0;x<input.size();x++)
+        sequence[x]=x;
+      net->set_rho(0.5);
+      net->set_mSEBound(0.01);
+      net->set_evaluationSize(0.5);
+      net->init();
+      iterations=0;
+      //Training loop
+      vectSize= input.size();
+      evaluationVectSize = vectSize * net->get_evaluationSize();
+      extractTrainningData();
+      vectSize -= evaluationVectSize;
 
-  }while((net->get_meanSqrErr() / ((double)vectSize)) > net->get_mSEBound());//while(net->update_meanSqrErr(net->get_meanSqrErr())); //
+      do
+      {
+          //Randomise input and reset MSE
+          net->reset_meanSqrErr();
+          random_shuffle(sequence,(sequence + vectSize));
+      //	    for(unsigned int x=0;x<vectSize;x++)
+      //	      cout<<sequence[x]<<" ";
+      //	    cout<<endl;
+          //cout<<"tmp_err: ";
+        for(int i = 0; i < vectSize; i++)
+        {
+            //Feed this data set forward;
+            net->update(input[sequence[i]]);
+            //Backpropagte_error
+            net->backpropagate_error(output[sequence[i]]);
+        }
+       // cout<<endl;
+        iterations++;
+        if(iterations%5000==0)
+          net->printData(iterations,vectSize);
+        if(iterations%50000==0)
+          printf("MSE:\t%f \t Iternations: \t %d \n",(net->get_meanSqrErr() / ((double) vectSize)),iterations);
+          //net->update_meanSqrErr(net->get_meanSqrErr());
+      //          else if(iterations%5000==0)
+      //            printf(".");
+
+      }while((net->get_meanSqrErr() / ((double)vectSize)) > net->get_mSEBound()&&iterations<1000000);//while(net->update_meanSqrErr(net->get_meanSqrErr())); //
+      if(iterations==1000000)
+        cout<<"Too many iterterations, reintailisng"<<endl;
+    }while((net->get_meanSqrErr() / ((double)vectSize)) > net->get_mSEBound());
   net->printData(iterations,vectSize);
   delete[] sequence;
   printf("\nTraining complete\n");
