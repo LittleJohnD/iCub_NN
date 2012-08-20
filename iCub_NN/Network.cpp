@@ -124,7 +124,7 @@ double Network::sigmoid_d(double number)
 	return ((1.0 - number) * number);
 }
 
-void Network::backpropagate_error(std::vector<double> &teachingInput_vector)
+void Network::backpropagate_error(std::vector<double> &teachingVector)
 {
 	int out,hid,inp;
 	double th_diff;
@@ -133,10 +133,10 @@ void Network::backpropagate_error(std::vector<double> &teachingInput_vector)
 	//cout<<"Err_out";
 	for(out = 0; out < OUTPUT_NEURONS; out++)
 	{
-		th_diff = (teachingInput_vector[out] - outputs[out]);
+		th_diff = (teachingVector[out] - outputs[out]);
 		err_out[out] = th_diff * sigmoid_d(outputs[out]);
 		//cout<<err_out[out]<<" ";
-		meanSqrErr += ((th_diff) * (th_diff));
+		meanSqrErr += (th_diff * th_diff);
 	}
 	//cout<<endl;
 	//Compute the error for the hidden nodes

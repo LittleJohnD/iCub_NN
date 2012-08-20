@@ -37,7 +37,7 @@ int evaluationVectSize;
 
 void readInInputFromFile( void )
 {
-  TiXmlDocument jSpace("joint_space.xml");
+  TiXmlDocument jSpace("test.xml");
   string elemName;
   TiXmlElement* elem;
   const char* attr;
@@ -81,7 +81,7 @@ void readInInputFromFile( void )
                           tmpOutputVector.push_back(atof(attr));
                         }
                     }
-                  output.push_back(tmpOutputVector);
+                  input.push_back(tmpOutputVector);
                 }
               else if(elemName == "LinkAttr")
                 {
@@ -97,7 +97,7 @@ void readInInputFromFile( void )
                           //printf("Component : %s\n",attr); // Do stuff with it
                         }
                   }
-                  input.push_back(tmpInputVector);
+                  output.push_back(tmpInputVector);
                 }
               else
                 printf("Error reading in File\n");
@@ -120,10 +120,6 @@ void readInInputFromFile( void )
 //      printf("Output Vector[%d]:\n",n);
 //      for(unsigned int o=0;o<output[n].size();o++)
 //        printf("\t %d: %f\t",o,output[n][o]);
-//      printf("\n");
-//      printf("Data Vector[%d]:\n",n);
-//      for(unsigned int o=0;o<data[n].size();o++)
-//        printf("\t %d: %f\t",o,data[n][o]);
 //      printf("\n");
 //    }
 }
@@ -337,15 +333,13 @@ int main(int argc, char** argv)
   printf("Initiating training\n");
   Network *net;
   readInInputFromFile();
-  cout<<"File read in"<<endl;
-  processToNormaliseData();
-  cout<<"Normalised"<<endl;
-  net = new Network(3,8,8,seed);
+  //processToNormaliseData();
+  net = new Network(2,2,1,seed);
   sequence = new int[input.size()];
   for(unsigned int x=0;x<input.size();x++)
     sequence[x]=x;
-  net->set_rho(0.5);
-  net->set_mSEBound(0.01);
+  net->set_rho(0.1);
+  net->set_mSEBound(0.001);
   net->set_evaluationSize(0.5);
   net->init();
   iterations=0;
@@ -395,18 +389,23 @@ int main(int argc, char** argv)
   {
           net->update(input[(vectSize+t)]);
   }
-  unNormaliseData("output");
-  //restoreData("output");
-  for(int c=0;c<evaluationVectSize;c++)
-      {
-        printf("Desired output[%d]:\n",c);
-        for(int d= 0;d<(output[vectSize+c].size());d++)
-          {
-  //                  printf("\t %f ", output[vectSize+c][d]);
-  //                  printf("\t\t Output: %f\n",((net->get_output()[d] *  (minMaxOutput[d][1] - minMaxOutput[d][0])) + minMaxOutput[d][0]));
-          }
-        printf("\n\n\n");
-      }
+  printf("Desired output:\n");
+  for(int d= 0;d<(output.size());d++)
+    {
+              printf("\t Output: %f\n",output[d][0]);
+    }
+//  unNormaliseData("output");
+//  //restoreData("output");
+//  for(int c=0;c<evaluationVectSize;c++)
+//      {
+//        printf("Desired output[%d]:\n",c);
+//        for(int d= 0;d<(output[vectSize+c].size());d++)
+//          {
+//                    printf("\t %f ", output[vectSize+c][d]);
+//                    printf("\t\t Output: %f\n",((net->get_output()[d] *  (minMaxOutput[d][1] - minMaxOutput[d][0])) + minMaxOutput[d][0]));
+//          }
+//        printf("\n\n\n");
+//      }
   printf("Testing complete\n");
   delete net;
   return (0);
