@@ -416,9 +416,14 @@ int main(int argc, char** argv)
    *
    */
   printf("Initiating testing...\n");
+  vector< vector< double> > outputVect(evaluationVectSize,vector<double>(8));
   for(int t=0;t<evaluationVectSize;t++)
   {
           net->update(evaluationInputSet[t]);
+          for(int i=0;i<8;i++)
+            {
+              outputVect[t].push_back(net->get_output()[i]);
+            }
   }
   unNormaliseData("output");
   //restoreData("output");
@@ -429,7 +434,7 @@ int main(int argc, char** argv)
         for(int d= 0;d<(evaluationOutputSet[c].size());d++)
           {
                     printf("\t %f ", evaluationOutputSet[c][d]);
-                    printf("\t\t Output: %f\n",evaluationOutputSet[c][d]);// *  (minMaxOutput[d][1] - minMaxOutput[d][0])) + minMaxOutput[d][0]));
+                    printf("\t\t Output: %f\n",outputVect[c][d]);// *  (minMaxOutput[d][1] - minMaxOutput[d][0])) + minMaxOutput[d][0]));
           }
         printf("\n\n\n");
       }
