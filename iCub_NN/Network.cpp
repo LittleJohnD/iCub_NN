@@ -36,7 +36,7 @@ Network::Network(int num_input, int num_hidden, int num_output, double seed,std:
 
 	err_out = new double [OUTPUT_NEURONS];
 	err_hid = new double [HIDDEN_NEURONS];
-	std::string outputFileName = "mseData"+to_string(seed)+".csv";
+	std::string outputFileName = "mseData"+to_string(seed)+type+".csv";
 	dataOutput.open (outputFileName.c_str());
 	if(!dataOutput.is_open())
 	  {
@@ -68,8 +68,6 @@ Network::~Network()
 	delete[] w_o_b;
 	delete[] err_out;
 	delete[] err_hid;
-
-	dataOutput.close();
 }
 
 void Network::init() {
@@ -87,6 +85,7 @@ void Network::init() {
 		}
 		w_o_b[out] = ((double(rand() % 100) / 100) - 0.5);
 	}
+	dataOutput <<"Type,"<<netType()<<"\n";
 	dataOutput <<"RHO,"<<RHO<<"\n";
 	dataOutput <<"Hidden_Nodes,"<<HIDDEN_NEURONS<<"\n";
 	dataOutput <<"Iterations,MSE "<<"\n";

@@ -39,6 +39,18 @@ public:
 	inline double* get_output( void ){return (outputs);}
 	inline void set_iterBound( int iB ){iterBound=iB;}
         inline int get_iterBound( void ){return (iterBound);}
+        inline void closeFile( void ){dataOutput.close();}
+        inline std::string netType( void )
+        {
+          if(typeNum==4)
+            {
+              return ("Motor");
+            }
+          else
+            {
+              return ("Eye");
+            }
+        }
 	inline std::string to_string (long num)
 	{
 	    std::stringstream ss;

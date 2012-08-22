@@ -296,24 +296,25 @@ int main(int argc, char** argv)
    * Pre-process the data by reading it in and normalising it.
    * Then initialising the networks and sequence array.
    */
+  seed = double(rand() % 100000);
+  int hiddenNodes = 8;
+  double learningRate = 0.1;
+  double evalSize = 0.5;
   Network *motorNet;
   Network *eyeNet;
-
-
   readInInputFromFile();
   processToNormaliseData();
   sequence = new int[input.size()];
   for(unsigned int x=0;x<input.size();x++)
     sequence[x]=x;
-
   cout<<"Starting eye network"<<endl;
   do
   {
-    eyeNet = new Network(3,4,4,seed,"eye");
-    eyeNet->set_rho(0.1);
-    eyeNet->set_mSEBound(0.001);
-    eyeNet->set_evaluationSize(0.5);
-    eyeNet->set_iterBound(1000000);
+    eyeNet = new Network(3,hiddenNodes,4,seed,"eye");
+    eyeNet->set_rho(learningRate);
+    eyeNet->set_mSEBound(0.01);
+    eyeNet->set_evaluationSize(evalSize);
+    eyeNet->set_iterBound(150000);
     eyeNet->init();
     vectSize= input.size();
     evaluationVectSize = vectSize * eyeNet->get_evaluationSize();
@@ -333,26 +334,28 @@ int main(int argc, char** argv)
         eyeNet->backpropagate_error(output[sequence[i]]);
       }
       iterations++;
-      if(iterations%5000==0)
+      if(iterations%1000==0)
         eyeNet->printData(iterations,vectSize);
-      if(iterations%50000==0)
-        printf("MSE:\t%f\t Iterations: %d\n",(eyeNet->get_meanSqrErr() / double(vectSize)),iterations);
+//      if(iterations%50000==0)
+//        printf("MSE:\t%f\t Iterations: %d\n",(eyeNet->get_meanSqrErr() / double(vectSize)),iterations);
     }while((eyeNet->get_meanSqrErr() / double(vectSize)) > eyeNet->get_mSEBound()&&iterations < eyeNet->get_iterBound());
     if(iterations==eyeNet->get_iterBound())
       cout<<"Too many iterations, re-initialling"<<endl;
   }while((eyeNet->get_meanSqrErr() / ((double)vectSize)) > eyeNet->get_mSEBound());
     eyeNet->printData(iterations,vectSize);
+    eyeNet->closeFile();
     cout<<"Eye network finished"<<endl;
-    printf("\nTraining complete\nAfter %d iterations \n",iterations);
+    printf("\nTraining complete\nAfter %d iterations \n\n",iterations);
+
   cout<<"Starting motor network"<<endl;
   do
     {
-      motorNet = new Network(3,4,4,seed,"motor");
-      motorNet->set_rho(0.1);
-      motorNet->set_mSEBound(0.001);
-      motorNet->set_evaluationSize(0.5);
-      motorNet->set_iterBound(1000000);
+      motorNet = new Network(3,hiddenNodes,4,seed,"motor");
+      motorNet->set_rho(learningRate);
+      motorNet->set_mSEBound(0.01);
+      motorNet->set_evaluationSize(evalSize);
       motorNet->init();
+      motorNet->set_iterBound(150000);
       vectSize= input.size();
       evaluationVectSize = vectSize * motorNet->get_evaluationSize();
       extractTrainningData();
@@ -378,46 +381,81 @@ int main(int argc, char** argv)
             motorNet->backpropagate_error(output[sequence[i]]);
         }
         iterations++;
-        if(iterations%5000==0)
+        if(iterations%1000==0)
           motorNet->printData(iterations,vectSize);
-        if(iterations%50000==0)
-          printf("MSE:\t%f\t Iterations: %d\n",(motorNet->get_meanSqrErr() / double(vectSize)),iterations);
+//        if(iterations%50000==0)
+//          printf("MSE:\t%f\t Iterations: %d\n",(motorNet->get_meanSqrErr() / double(vectSize)),iterations);
       }while((motorNet->get_meanSqrErr() / ((double)vectSize)) > motorNet->get_mSEBound()&& iterations < motorNet->get_iterBound());
       if(iterations==motorNet->get_iterBound())
         cout<<"Too many iterations, re-initialling"<<endl;
     }while((motorNet->get_meanSqrErr() / ((double)vectSize)) > motorNet->get_mSEBound());
     motorNet->printData(iterations,vectSize);
+    motorNet->closeFile();
     cout<<"Motor network finished"<<endl;
-
+    printf("\nTraining complete\nAfter %d iterations \n",iterations);
 
   delete[] sequence;
-  printf("\nTraining complete\nAfter %d iterations \n",iterations);
   /*
    * End of training loop
    *
    * Now testing the network
    *
    */
-//  printf("Initiating testing...\n");
-//  for(int t=0;t<evaluationVectSize;t++)
-//  {
-//          net->update(evaluationInputSet[t]);
-//  }
-//  unNormaliseData("output");
-//  //restoreData("output");
-//  for(int c=0;c<evaluationVectSize;c++)
-//      {
-//        printf("Desired output[%d]:\n",c);
-//
-//        for(int d= 0;d<(evaluationOutputSet[c].size());d++)
-//          {
-//                    printf("\t %f ", evaluationOutputSet[c][d]);
-//                    printf("\t\t Output: %f\n",evaluationOutputSet[c][d]);// *  (minMaxOutput[d][1] - minMaxOutput[d][0])) + minMaxOutput[d][0]));
-//          }
-//        printf("\n\n\n");
-//      }
-//  printf("Testing complete\n");
+  printf("Initiating testing...\n");
+  vector< vector< double> > motorOutputVect(evaluationVectSize,vector<double>(4));
+  vector< vector< double> > eyeOutputVect(evaluationVectSize,vector<double>(4));
+  for(int t=0;t<evaluationVectSize;t++)
+  {
+          motorNet->update(evaluationInputSet[t]);
+          for(int i=0;i<4;i++)
+            {
+              motorOutputVect[t].push_back(motorNet->get_output()[i]);
+            }
+          eyeNet->update(evaluationInputSet[t]);
+          for(int i=0;i<4;i++)
+            {
+              eyeOutputVect[t].push_back(eyeNet->get_output()[i]);
+            }
+  }
+//  cout<<"Eye output"<<endl;
+//  for(unsigned int i=0;i<eyeOutputVect.size();i++)
+//    {
+//      for(unsigned int j=0;j<eyeOutputVect[i].size();j++)
+//        {
+//          cout<<eyeOutputVect[i][j]<<" ";
+//        }
+//      cout<<endl;
+//    }
+//  cout<<endl;
+//  cout<<"motor output"<<endl;
+//  for(unsigned int i=0;i<motorOutputVect.size();i++)
+//    {
+//      for(unsigned int j=0;j<motorOutputVect[i].size();j++)
+//        {
+//          cout<<motorOutputVect[i][j]<<" ";
+//        }
+//      cout<<endl;
+//    }
+//  cout<<endl;
+  unNormaliseData("output");
+  //restoreData("output");
+  for(int c=0;c<evaluationVectSize;c++)
+      {
+        printf("Desired output[%d]:\n",c);
+
+        for(int d= 0;d<(evaluationOutputSet[c].size());d++)
+          {
+                    printf("\t %f ", evaluationOutputSet[c][d]);
+                    if(d<4)
+                      printf("\t\t Output: %f\n",((motorOutputVect[c][d+4] * (minMaxOutput[d][1] - minMaxOutput[d][0])) + minMaxOutput[d][0]));
+                    else
+                      printf("\t\t Output: %f\n",((eyeOutputVect[c][d+4] * (minMaxOutput[d][1] - minMaxOutput[d][0])) + minMaxOutput[d][0]));
+          }
+        printf("\n");
+      }
+  printf("Testing complete\n");
   delete motorNet;
   delete eyeNet;
+  printf("Program complete\n");
   return (0);
 }
